@@ -1,0 +1,45 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="header">
+      <h2>State Data Centre</h2>
+      <p>Service Desk Portal</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input 
+          type="text" 
+          id="username" 
+          [(ngModel)]="credentials.username" 
+          name="username" 
+          required
+          placeholder="Enter ID"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          [(ngModel)]="credentials.password" 
+          name="password" 
+          required
+          placeholder="••••••••"
+        >
+      </div>
+
+      <div *ngIf="errorMessage" class="alert error">
+        {{ errorMessage }}
+      </div>
+
+      <button type="submit" [disabled]="!loginForm.form.valid || isLoading">
+        <span *ngIf="!isLoading">Login</span>
+        <span *ngIf="isLoading">Verifying...</span>
+      </button>
+
+    </form>
+  </div>
+</div>

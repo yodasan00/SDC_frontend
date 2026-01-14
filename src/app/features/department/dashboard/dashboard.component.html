@@ -1,0 +1,74 @@
+<div class="dashboard-container">
+  
+  <div class="header-section">
+    <div>
+      <h1>Department Dashboard</h1>
+      <p>Manage your support requests</p>
+    </div>
+    <button class="btn-create" routerLink="/department/create-ticket">+ New Ticket</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">Loading data...</div>
+
+  <div *ngIf="!isLoading && stats">
+    
+    <div class="stats-grid">
+      <div class="card card-blue">
+        <h3>{{ stats.total_tickets }}</h3>
+        <span>Total Tickets</span>
+      </div>
+      <div class="card card-yellow">
+        <h3>{{ stats.pending }}</h3>
+        <span>Pending Approval</span>
+      </div>
+      <div class="card card-green">
+        <h3>{{ stats.approved }}</h3>
+        <span>Approved</span>
+      </div>
+      <div class="card card-red">
+        <h3>{{ stats.rejected }}</h3>
+        <span>Rejected</span>
+      </div>
+    </div>
+
+    <div class="recent-tickets">
+      <h2>My Recent Tickets</h2>
+      
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of tickets">
+            <td>#{{ ticket.id }}</td>
+            <td>{{ ticket.title }}</td>
+            <td>{{ ticket.created_at | date:'mediumDate' }}</td>
+            <td>{{ ticket.priority }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(ticket.status)">
+                {{ ticket.status }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-view">View</button>
+            </td>
+          </tr>
+          
+          <tr *ngIf="tickets.length === 0">
+            <td colspan="6" style="text-align: center; padding: 20px;">
+              No tickets found. Create one to get started!
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="create-container">
+  
+  <div class="form-card">
+    <div class="card-header">
+      <h2>Create New Ticket</h2>
+      <p>Describe your issue clearly so the technical team can help you.</p>
+    </div>
+
+    @if (successMessage) {
+      <div class="alert alert-success">{{ successMessage }}</div>
+    }
+    @if (errorMessage) {
+      <div class="alert alert-error">{{ errorMessage }}</div>
+    }
+
+    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="title">Issue Title</label>
+        <input 
+          id="title" 
+          type="text" 
+          formControlName="title" 
+          placeholder="e.g., Internet not working in Lab 2"
+          [class.invalid]="ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched"
+        >
+        @if (ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched) {
+          <small class="error-text">Title is required (min 5 chars).</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">Detailed Description</label>
+        <textarea 
+          id="description" 
+          rows="5" 
+          formControlName="description" 
+          placeholder="Please provide details about the issue..."
+          [class.invalid]="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched"
+        ></textarea>
+        @if (ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched) {
+          <small class="error-text">Description is required (min 10 chars).</small>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/department/my-tickets">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="ticketForm.invalid || isSubmitting">
+          @if (isSubmitting) {
+            Submitting...
+          } @else {
+            Submit Ticket
+          }
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

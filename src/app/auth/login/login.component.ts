@@ -28,21 +28,20 @@ onSubmit() {
     next: (res) => {
       this.isLoading = false;
       
-      // --- ADD THIS DEBUG LOG ---
+  
       console.log('Login Success! Full Response:', res);
       console.log('Role received:', res.role); 
-      // --------------------------
-
+  
       // Normalize the role to lowercase just in case
       const role = res.role ? res.role.toLowerCase() : '';
 
       switch(role) {
         case 'department':
-          console.log('Navigating to Department Dashboard...'); // Debug log
-          this.router.navigate(['/department/dashboard']);
+          console.log('Navigating to Department Dashboard...'); 
+          this.router.navigate(['/department/home']);
           break;
         case 'dit':
-          this.router.navigate(['/dit/dashboard']);
+          this.router.navigate(['/dit/home']);
           break;
         case 'sdc':
           this.router.navigate(['/sdc/dashboard']);
@@ -59,4 +58,5 @@ onSubmit() {
     }
   });
 }
+
 }

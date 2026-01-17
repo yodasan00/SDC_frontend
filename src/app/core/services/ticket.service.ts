@@ -9,6 +9,7 @@ export interface Ticket {
   priority: string;
   status: string;
   created_at: string;
+  created_by: number;
 }
 
 export interface DashboardStats {
@@ -41,5 +42,23 @@ export class TicketService {
   // 3. Create Ticket (We will use this later)
   createTicket(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}create/`, data);
+  }
+
+  getDitStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.apiUrl}dashboard/dit/`);
+  }
+
+  getPendingTickets(): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}pending/`);
+  }
+
+  // 2. Approve a Ticket
+  approveTicket(ticketId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}${ticketId}/approve/`, {});
+  }
+
+  // 3. Reject a Ticket
+  rejectTicket(ticketId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}${ticketId}/reject/`, {});
   }
 }

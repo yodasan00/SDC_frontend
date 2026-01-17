@@ -1,0 +1,46 @@
+<div class="layout-wrapper" [class.sidebar-collapsed]="!isSidebarOpen">
+  
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>DIT Admin</h2>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/dit/home" routerLinkActive="active">
+          <span class="icon">🏠</span>
+          <span class="link-text">Overview</span>
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/dit/pending" routerLinkActive="active">
+          <span class="icon">⏳</span>
+          <span class="link-text">Pending Approvals</span>
+        </a>
+      </li>
+      
+      <li class="mt-auto">
+        <a routerLink="/login">
+          <span class="icon">🚪</span>
+          <span class="link-text">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="main-container">
+    
+    <app-header 
+      [title]="'DIT Dashboard'" 
+      (toggleSidebar)="toggleSidebar()">
+    </app-header>
+
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+
+    <app-footer></app-footer>
+
+  </main>
+</div>

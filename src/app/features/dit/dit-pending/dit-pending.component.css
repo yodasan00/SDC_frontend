@@ -1,0 +1,76 @@
+.pending-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header h2 { color: #2c3e50; margin-bottom: 0.5rem; }
+.header p { color: #7f8c8d; margin-bottom: 2rem; }
+
+/* Table Styles (Reused for consistency) */
+.table-responsive {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.ticket-table { width: 100%; border-collapse: collapse; }
+.ticket-table th {
+  background-color: #f8f9fa;
+  color: #7f8c8d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.ticket-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #ecf0f1;
+  vertical-align: top; /* Align to top for descriptions */
+}
+
+.ticket-title { font-weight: 600; color: #2c3e50; display: block; }
+.ticket-desc { font-size: 0.9rem; color: #7f8c8d; margin-top: 4px; }
+.empty-state { text-align: center; padding: 3rem; color: #95a5a6; font-style: italic; }
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-approve {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-approve:hover:not(:disabled) { background-color: #219150; }
+
+.btn-reject {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-reject:hover:not(:disabled) { background-color: #c0392b; }
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

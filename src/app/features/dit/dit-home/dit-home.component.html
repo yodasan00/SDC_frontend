@@ -1,0 +1,27 @@
+<div class="home-container">
+  <div class="welcome-banner">
+    <h1>Hello, Nodal Officer</h1>
+    <p>You have pending requests requiring your attention.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading">Loading...</div>
+  }
+
+  @if (!isLoading && stats) {
+    <div class="stats-grid">
+      <div class="card card-yellow">
+        <div class="card-value">{{ stats.pending }}</div>
+        <div class="card-label">Pending Approval</div>
+      </div>
+      <div class="card card-green">
+        <div class="card-value">{{ stats.approved }}</div>
+        <div class="card-label">Approved</div>
+      </div>
+      <div class="card card-red">
+        <div class="card-value">{{ stats.rejected }}</div>
+        <div class="card-label">Rejected</div>
+      </div>
+    </div>
+  }
+</div>

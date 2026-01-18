@@ -44,7 +44,7 @@ onSubmit() {
           this.router.navigate(['/dit/home']);
           break;
         case 'sdc':
-          this.router.navigate(['/sdc/dashboard']);
+          this.router.navigate(['/sdc/home']);
           break;
         default:
           console.error('Unknown Role:', role); // This will tell you if the role is wrong

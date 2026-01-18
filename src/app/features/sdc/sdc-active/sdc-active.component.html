@@ -1,0 +1,55 @@
+<div class="active-container">
+  
+  <div class="header">
+    <h2>Active Work in Progress</h2>
+    <p>Tasks you are currently working on. Mark them complete when done.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-spinner">Loading active tasks...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ticket of activeTickets; track ticket.id) {
+            <tr>
+              <td>#{{ ticket.id }}</td>
+              <td>
+                <span class="ticket-title">{{ ticket.title }}</span>
+                <span class="ticket-desc">{{ ticket.description }}</span>
+              </td>
+              <td>
+                <span class="status-badge status-progress">IN PROGRESS</span>
+              </td>
+              <td>
+                <button class="btn-view" [routerLink]="['/sdc/ticket', ticket.id]">
+                    💬 Chat / Logs
+                </button>
+
+                <button class="btn-complete" (click)="completeWork(ticket.id)">
+                    ✅ Finish
+                </button>
+                </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">
+                No active tasks. Go to "New Requests" to start a job!
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

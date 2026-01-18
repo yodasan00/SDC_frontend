@@ -1,0 +1,73 @@
+<div class="details-container" *ngIf="ticket">
+  
+  <div class="ticket-header">
+    <div class="top-row">
+      <h2>#{{ ticket.id }} - {{ ticket.title }}</h2>
+      <span class="status-badge">{{ ticket.status }}</span>
+    </div>
+    <p class="description">{{ ticket.description }}</p>
+    <div class="meta">Created on {{ ticket.created_at | date:'medium' }}</div>
+  </div>
+
+  <div class="tabs">
+    <button [class.active]="activeTab === 'comments'" (click)="activeTab = 'comments'">
+      💬 Comments ({{ comments.length }})
+    </button>
+    <button [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'">
+      📜 History Logs
+    </button>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'comments'">
+    
+    <div class="comments-list">
+      @for (c of comments; track c.id) {
+        <div class="comment-bubble">
+          <div class="comment-meta">
+            <strong>{{ c.user }}</strong> 
+            <span>{{ c.created_at | date:'short' }}</span>
+          </div>
+          <div class="comment-text">{{ c.comment }}</div>
+        </div>
+      } @empty {
+        <div class="empty-state">No comments yet. Start the conversation!</div>
+      }
+    </div>
+
+    <div class="comment-input">
+      <textarea [(ngModel)]="newCommentText" placeholder="Type a message..."></textarea>
+      <button (click)="postComment()" [disabled]="!newCommentText.trim()">Send</button>
+    </div>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'logs'">
+    <table class="logs-table">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>User</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of logs; track log.id) {
+          <tr>
+            <td>{{ log.timestamp | date:'short' }}</td>
+            <td>{{ log.user }}</td>
+            <td>
+              {{ log.action }}
+              @if (log.old_status) {
+                <span>({{ log.old_status }} ➝ {{ log.new_status }})</span>
+              }
+            </td>
+          </tr>
+        } @empty {
+           <tr><td colspan="3" class="empty-state">No history logs found.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<div *ngIf="isLoading" class="loading-spinner">Loading details...</div>

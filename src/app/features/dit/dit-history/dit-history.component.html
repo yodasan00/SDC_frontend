@@ -1,0 +1,54 @@
+<div class="history-container">
+  
+  <div class="header">
+    <h2>Approval History</h2>
+    <p>Records of all tickets processed by DIT.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-spinner">Loading history...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Processed Date</th>
+            <th>Decision</th>
+            <th>Action</th> </tr>
+        </thead>
+        <tbody>
+          @for (ticket of historyTickets; track ticket.id) {
+            <tr>
+              <td>#{{ ticket.id }}</td>
+              <td>
+                <span class="ticket-title">{{ ticket.title }}</span>
+                <span class="ticket-desc">{{ ticket.description }}</span>
+              </td>
+              <td>{{ ticket.created_at | date:'mediumDate' }}</td>
+              <td>
+                <span class="status-badge" 
+                      [class.approved]="ticket.status === 'APPROVED' || ticket.status === 'IN_PROGRESS' || ticket.status === 'COMPLETED'"
+                      [class.rejected]="ticket.status === 'REJECTED'">
+                  {{ ticket.status }}
+                </span>
+              </td>
+              <td>
+                <a [routerLink]="['/dit/ticket', ticket.id]" class="btn-view">
+                  👁️ Details
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No history found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

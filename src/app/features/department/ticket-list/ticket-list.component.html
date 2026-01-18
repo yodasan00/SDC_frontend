@@ -36,7 +36,9 @@
                 </span>
               </td>
               <td>
-                <button class="btn-view">Details</button>
+                <a [routerLink]="['/department/ticket', ticket.id]" class="btn-view">
+                  👁️ View
+                 </a>
               </td>
             </tr>
           } @empty {

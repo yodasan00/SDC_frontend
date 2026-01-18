@@ -8,10 +8,14 @@ import { DepartmentHomeComponent } from './features/department/home/home.compone
 import { DitPendingComponent } from './features/dit/dit-pending/dit-pending.component';
 import { DitHomeComponent } from './features/dit/dit-home/dit-home.component';
 import { DitLayoutComponent } from './features/dit/dit-layout/dit-layout.component';
+import { SdcPendingComponent } from './features/sdc/sdc-pending/sdc-pending.component';
+import { SdcHomeComponent } from './features/sdc/sdc-home/sdc-home.component';
+import { SdcLayoutComponent } from './features/sdc/sdc-layout/sdc-layout.component';
+import { SdcActiveComponent } from './features/sdc/sdc-active/sdc-active.component';
+import { TicketDetailsComponent } from './features/shared/ticket-details/ticket-details.component';
+import { DitHistoryComponent } from './features/dit/dit-history/dit-history.component';
+import { SdcHistoryComponent } from './features/sdc/sdc-history/sdc-history.component';
 
-// Placeholder components (We will build these next)
-//import { DepartmentDashboardComponent } from './features/department/dashboard/dashboard.component';
-// import { DitDashboardComponent } ... 
 
 export const routes: Routes = [
   // 1. Default Route -> Login
@@ -23,11 +27,12 @@ export const routes: Routes = [
   // 3. Protected Department Routes
   { 
     path: 'department', 
-    component: DepartmentLayoutComponent, // <--- The Parent (Sidebar lives here)
+    component: DepartmentLayoutComponent,
     children: [
-      { path: 'home', component: DepartmentHomeComponent },          // <--- Landing Page
-      { path: 'my-tickets', component: TicketListComponent },        // <--- Status List
-      { path: 'create-ticket', component: CreateTicketComponent },   // <--- New Ticket
+      { path: 'home', component: DepartmentHomeComponent },         
+      { path: 'my-tickets', component: TicketListComponent },        
+      { path: 'create-ticket', component: CreateTicketComponent },  
+      { path: 'ticket/:id', component: TicketDetailsComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
     , canActivate: [authGuard]
@@ -38,6 +43,22 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: DitHomeComponent },
       { path: 'pending', component: DitPendingComponent },
+      { path: 'ticket/:id', component: TicketDetailsComponent },
+      { path: 'history', component: DitHistoryComponent },
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
+    ]
+    , canActivate: [authGuard]
+  },
+
+  { 
+    path: 'sdc', 
+    component: SdcLayoutComponent,
+    children: [
+      { path: 'home', component: SdcHomeComponent },
+      { path: 'pending', component: SdcPendingComponent }, 
+      { path: 'active', component: SdcActiveComponent },
+      { path: 'ticket/:id', component: TicketDetailsComponent },
+      { path: 'history', component: SdcHistoryComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
     , canActivate: [authGuard]

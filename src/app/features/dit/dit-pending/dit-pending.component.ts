@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TicketService, Ticket } from '../../../core/services/ticket.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dit-pending',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dit-pending.component.html',
   styleUrls: ['./dit-pending.component.css']
 })

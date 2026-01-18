@@ -1,0 +1,19 @@
+<div class="home-container">
+  <div class="welcome-banner">
+    <h1>Welcome, SDC Engineer</h1>
+    <p>Overview of technical tasks assigned by DIT.</p>
+  </div>
+
+  @if (!isLoading && stats) {
+    <div class="stats-grid">
+      <div class="card card-blue">
+        <div class="card-value">{{ stats.approved }}</div> 
+        <div class="card-label">Tasks to Do</div>
+      </div>
+      <div class="card card-green">
+        <div class="card-value">{{ stats.completed || 0 }}</div>
+        <div class="card-label">Completed</div>
+      </div>
+    </div>
+  }
+</div>

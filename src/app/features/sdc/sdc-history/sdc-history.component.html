@@ -1,0 +1,50 @@
+<div class="history-container">
+  
+  <div class="header">
+    <h2>Work History</h2>
+    <p>Archive of completed technical tasks.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-spinner">Loading archives...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Date Created</th>
+            <th>Status</th>
+            <th>Action</th> </tr>
+        </thead>
+        <tbody>
+          @for (ticket of historyTickets; track ticket.id) {
+            <tr>
+              <td>#{{ ticket.id }}</td>
+              <td>
+                <span class="ticket-title">{{ ticket.title }}</span>
+                <span class="ticket-desc">{{ ticket.description }}</span>
+              </td>
+              <td>{{ ticket.created_at | date:'mediumDate' }}</td>
+              <td>
+                <span class="status-badge status-completed">COMPLETED</span>
+              </td>
+              <td>
+                <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-view">
+                  👁️ Details
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No completed tasks found yet.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

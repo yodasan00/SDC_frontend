@@ -1,0 +1,68 @@
+<div class="pending-container">
+  
+  <div class="header">
+    <h2>Task Queue</h2>
+    <p>Manage tickets assigned to the State Data Centre.</p>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-spinner">Loading tasks...</div>
+  }
+
+  @if (!isLoading) {
+    <div class="table-responsive">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of tasks; track task.id) {
+            <tr>
+              <td>#{{ task.id }}</td>
+              <td>
+                <span class="ticket-title">{{ task.title }}</span>
+                <span class="ticket-desc">{{ task.description }}</span>
+              </td>
+              <td>
+                <span class="status-badge" 
+                      [class.status-approved]="task.status === 'APPROVED'"
+                      [class.status-progress]="task.status === 'IN_PROGRESS'">
+                  {{ task.status }}
+                </span>
+              </td>
+              <td>
+                @if (task.status === 'APPROVED') {
+                  <button 
+                    class="btn-start" 
+                    (click)="startWork(task.id)"
+                    [disabled]="processingId === task.id">
+                    @if(processingId === task.id) { ... } @else { ▶ Start Work }
+                  </button>
+                }
+
+                @if (task.status === 'IN_PROGRESS') {
+                  <button 
+                    class="btn-complete" 
+                    (click)="completeWork(task.id)"
+                    [disabled]="processingId === task.id">
+                    @if(processingId === task.id) { ... } @else { ✅ Finish }
+                  </button>
+                }
+
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">No active tasks. You are all caught up!</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

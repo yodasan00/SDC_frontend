@@ -1,0 +1,35 @@
+.pending-container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+.table-responsive { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+
+.ticket-table { width: 100%; border-collapse: collapse; }
+.ticket-table th, .ticket-table td { padding: 1rem; border-bottom: 1px solid #eee; text-align: left; }
+
+/* Status Badges */
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+.status-approved { background-color: #d4edda; color: #155724; } /* Green-ish */
+.status-progress { background-color: #fff3cd; color: #856404; } /* Yellow-ish */
+
+/* Buttons */
+.btn-start {
+  background-color: #3498db; /* Blue */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-start:hover { background-color: #2980b9; }
+
+.btn-complete {
+  background-color: #27ae60; /* Green */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-complete:hover { background-color: #219150; }
+
+button:disabled { opacity: 0.6; cursor: not-allowed; }

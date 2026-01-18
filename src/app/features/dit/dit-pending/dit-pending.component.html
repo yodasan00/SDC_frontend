@@ -60,23 +60,17 @@
               </td>
 
               <!-- ACTIONS -->
-              <td>
-                <div class="action-buttons">
-                  <button
-                    class="btn-approve"
-                    (click)="approve(ticket.id)"
-                    [disabled]="processingId === ticket.id">
-                    ✓ Approve
-                  </button>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-view" [routerLink]="['/dit/ticket', ticket.id]">
+                👁️ Details
+                </button>
 
-                  <button
-                    class="btn-reject"
-                    (click)="reject(ticket.id)"
-                    [disabled]="processingId === ticket.id">
-                    ✕ Reject
-                  </button>
-                </div>
-              </td>
+                <button class="btn-approve" (click)="approve(ticket.id)">✓</button>
+                <button class="btn-reject" (click)="reject(ticket.id)">✕</button>
+    
+              </div>
+            </td>
 
             </tr>
           } @empty {

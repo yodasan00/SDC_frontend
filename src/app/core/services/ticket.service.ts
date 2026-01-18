@@ -10,7 +10,12 @@ export interface Ticket {
   status: string;
   created_at: string;
   created_by: number;
+
+  // ✅ ADD THESE (do not remove anything)
+  created_by_name?: string;
+  department_name?: string;
 }
+
 
 export interface DashboardStats {
   total_tickets: number;

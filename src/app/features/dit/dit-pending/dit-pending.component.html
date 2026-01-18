@@ -1,64 +1,95 @@
 <div class="pending-container">
-  
+
+  <!-- Header -->
   <div class="header">
     <h2>Pending Approvals</h2>
     <p>Review and take action on department requests.</p>
   </div>
 
+  <!-- Loading -->
   @if (isLoading) {
-    <div class="loading-spinner">Loading pending tickets...</div>
+    <div class="loading-spinner">
+      Loading pending tickets...
+    </div>
   }
 
+  <!-- Table -->
   @if (!isLoading) {
     <div class="table-responsive">
       <table class="ticket-table">
+
+        <!-- TABLE HEADER -->
         <thead>
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Title</th>
-            <th>Created By</th> <th>Date</th>
+            <th>Created By</th>
+            <th>Department</th>
+            <th>Date</th>
             <th>Actions</th>
           </tr>
         </thead>
+
+        <!-- TABLE BODY -->
         <tbody>
-          @for (ticket of pendingTickets; track ticket.id) {
+          @for (ticket of pendingTickets; track ticket.id; let i = $index) {
             <tr>
-              <td>#{{ ticket.id }}</td>
+
+              <!-- AUTO-INCREMENT SERIAL NUMBER -->
+              <td>{{ i + 1 }}</td>
+
+              <!-- TITLE -->
               <td>
                 <span class="ticket-title">{{ ticket.title }}</span>
                 <div class="ticket-desc">{{ ticket.description }}</div>
               </td>
-              <td>User ID: {{ ticket.created_by }}</td> 
-              <td>{{ ticket.created_at | date:'mediumDate' }}</td>
+
+              <!-- CREATED BY -->
+              <td>
+                {{ ticket.created_by_name || ('User ID: ' + ticket.created_by) }}
+              </td>
+
+              <!-- DEPARTMENT -->
+              <td>
+                {{ ticket.department_name || '-' }}
+              </td>
+
+              <!-- DATE -->
+              <td>
+                {{ ticket.created_at | date:'mediumDate' }}
+              </td>
+
+              <!-- ACTIONS -->
               <td>
                 <div class="action-buttons">
-                  
-                  <button 
-                    class="btn-approve" 
+                  <button
+                    class="btn-approve"
                     (click)="approve(ticket.id)"
                     [disabled]="processingId === ticket.id">
-                    @if (processingId === ticket.id) { ... } @else { ✓ Approve }
+                    ✓ Approve
                   </button>
 
-                  <button 
-                    class="btn-reject" 
+                  <button
+                    class="btn-reject"
                     (click)="reject(ticket.id)"
                     [disabled]="processingId === ticket.id">
                     ✕ Reject
                   </button>
-                  
                 </div>
               </td>
+
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="empty-state">
+              <td colspan="6" class="empty-state">
                 No pending tickets found. Good job!
               </td>
             </tr>
           }
         </tbody>
+
       </table>
     </div>
   }
+
 </div>

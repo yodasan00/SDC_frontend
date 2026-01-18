@@ -12,7 +12,7 @@ import { FooterComponent } from '../../../core/components/footer/footer.componen
   styleUrls: ['./dit-layout.component.css']
 })
 export class DitLayoutComponent {
-  isSidebarOpen = true;
+  isSidebarOpen = false;
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;

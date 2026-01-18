@@ -12,6 +12,6 @@ import { FooterComponent } from '../../../core/components/footer/footer.componen
   styleUrls: ['./sdc-layout.component.css'] // Re-use dit-layout.css or create new
 })
 export class SdcLayoutComponent {
-  isSidebarOpen = true;
+  isSidebarOpen = false;
   toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
 }

@@ -1,0 +1,68 @@
+<div class="audit-container">
+  
+  <div class="header-section">
+    <div>
+      <h2>Audit Registry</h2>
+      <p>Search by ID, Title, Status, or Domain Tag.</p>
+    </div>
+    
+    <div class="search-box">
+      <input 
+        type="text" 
+        placeholder="Search tickets..." 
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+      >
+      <span class="search-hint">Typing searches automatically...</span>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Assigned Domain</th> <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ticket of tickets; track ticket.id) {
+          <tr>
+            <td>#{{ ticket.id }}</td>
+            <td>
+              <div class="title-text">{{ ticket.title }}</div>
+              <small>{{ ticket.created_at | date:'short' }}</small>
+            </td>
+            
+            <td>
+              <span class="domain-badge" [class]="ticket.domain?.toLowerCase()">
+                {{ ticket.domain === 'NONE' ? 'Unassigned' : ticket.domain }}
+              </span>
+            </td>
+
+            <td>
+              <span class="status-badge" [class]="ticket.status.toLowerCase()">
+                {{ ticket.status }}
+              </span>
+            </td>
+
+            <td>
+              <a [routerLink]="['/officer/ticket', ticket.id]" class="btn-audit">
+                👁️ Audit Log
+              </a>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" style="text-align:center; padding: 2rem;">
+              No records found.
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

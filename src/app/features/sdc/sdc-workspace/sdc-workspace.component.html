@@ -1,0 +1,57 @@
+<div class="workspace-container">
+  <div class="header">
+    <a routerLink="/sdc/pending" class="back-link">← Back to Inbox</a>
+    <h2>Technical Workspace</h2>
+  </div>
+
+  @if (ticket) {
+    <div class="ticket-card">
+      <div class="status-bar" [class]="ticket.status.toLowerCase()">
+        Current Status: <strong>{{ ticket.status.replace('_', ' ') }}</strong>
+      </div>
+
+      <div class="details">
+        <h1>{{ ticket.title }}</h1>
+        <p class="desc">{{ ticket.description }}</p>
+        
+        <div class="meta-info">
+          <p><strong>Requester:</strong> {{ ticket.created_by_name }}</p>
+          <p><strong>Created:</strong> {{ ticket.created_at | date:'medium' }}</p>
+          @if (ticket.pm_remarks) {
+            <p class="remarks"><strong>PM Remarks:</strong> {{ ticket.pm_remarks }}</p>
+          }
+        </div>
+
+        @if (ticket.attachment) {
+           <a [href]="ticket.attachment" target="_blank" class="download-btn">
+             📂 View Attachment
+           </a>
+        }
+      </div>
+
+      <div class="action-footer">
+        
+        @if (ticket.status === 'APPROVED') {
+          <div class="initial-actions">
+            
+            <button class="btn-action start" (click)="startWork()" [disabled]="isProcessing">
+              ⚡ Start Work
+            </button>
+
+            <button class="btn-action revert" (click)="revertWork()" [disabled]="isProcessing">
+              ↩ Wrong Team? Revert to PM
+            </button>
+
+          </div>
+        }
+
+        @if (ticket.status === 'IN_PROGRESS') {
+          <button class="btn-action complete" (click)="completeWork()" [disabled]="isProcessing">
+            ✅ Mark as Completed
+          </button>
+        }
+
+      </div>
+    </div>
+  }
+</div>

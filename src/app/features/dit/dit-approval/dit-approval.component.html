@@ -1,0 +1,74 @@
+<div class="approval-container">
+  
+  <div class="header">
+    <a routerLink="/dit/pending" class="back-link">← Back to List</a>
+    <h2>Review Ticket #{{ ticket?.id }}</h2>
+  </div>
+
+  @if (ticket) {
+    <div class="content-grid">
+      
+      <div class="details-card">
+        <div class="detail-row">
+          <label>Title:</label>
+          <h3>{{ ticket.title }}</h3>
+        </div>
+        <div class="detail-row">
+          <label>Description:</label>
+          <p class="desc">{{ ticket.description }}</p>
+        </div>
+        <div class="detail-row">
+          <label>Requester:</label>
+          <span>{{ ticket.created_by_name }}</span>
+        </div>
+        <div class="detail-row">
+          <label>Date:</label>
+          <span>{{ ticket.created_at | date:'medium' }}</span>
+        </div>
+
+        @if (ticket.attachment) {
+          <div class="attachment-box">
+            <label>📎 Attached File:</label>
+            <a [href]="ticket.attachment" target="_blank" class="file-link">
+              View Attachment
+            </a>
+          </div>
+        }
+      </div>
+
+      <div class="decision-card">
+        <h3>Decision Console</h3>
+        
+        <div class="form-group">
+          <label>1. Select Technical Domain <span class="req">*</span></label>
+          <select [(ngModel)]="selectedDomain" class="domain-select">
+            <option value="" disabled selected>-- Choose Team --</option>
+            @for (d of domains; track d.code) {
+              <option [value]="d.code">{{ d.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>2. Remarks (Optional)</label>
+          <textarea 
+            [(ngModel)]="remarks" 
+            rows="4" 
+            placeholder="Add notes for the technical team or reason for rejection..."
+          ></textarea>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-approve" (click)="approve()" [disabled]="isProcessing">
+            ✓ Approve & Forward
+          </button>
+          
+          <button class="btn-reject" (click)="reject()" [disabled]="isProcessing">
+            ✕ Reject
+          </button>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

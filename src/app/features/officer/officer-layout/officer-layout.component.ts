@@ -5,13 +5,16 @@ import { HeaderComponent } from '../../../core/components/header/header.componen
 import { FooterComponent } from '../../../core/components/footer/footer.component';
 
 @Component({
-  selector: 'app-sdc-layout',
+  selector: 'app-officer-layout',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, HeaderComponent, FooterComponent],
-  templateUrl: './sdc-layout.component.html',
-  styleUrls: ['./sdc-layout.component.css'] 
+  templateUrl: './officer-layout.component.html',
+  styleUrls: ['./officer-layout.component.css']
 })
-export class SdcLayoutComponent {
+export class OfficerLayoutComponent {
   isSidebarOpen = false;
-  toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

@@ -1,18 +1,19 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { TicketService, Ticket } from '../../../core/services/ticket.service';
 
 @Component({
   selector: 'app-sdc-pending',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './sdc-pending.component.html',
   styleUrls: ['./sdc-pending.component.css']
 })
 export class SdcPendingComponent implements OnInit {
-  tasks: Ticket[] = [];
+  inboxTickets: Ticket[] = [];
   isLoading = true;
-  processingId: number | null = null; // Locks the button while API is running
+  processingId: number | null = null; // Spinner for specific buttons
 
   constructor(
     private ticketService: TicketService,
@@ -20,56 +21,39 @@ export class SdcPendingComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadTasks();
+    this.loadInbox();
   }
 
-  loadTasks() {
+  loadInbox() {
     this.isLoading = true;
-    this.ticketService.getSdcApprovedTickets().subscribe({
+    // Calls the endpoint that filters by the user's domain automatically
+    this.ticketService.getSdcInbox().subscribe({
       next: (data) => {
-        this.tasks = data;
+        this.inboxTickets = data;
         this.isLoading = false;
         this.cd.detectChanges();
       },
       error: (err) => {
-        console.error('Error loading tasks:', err);
+        console.error('Error loading inbox:', err);
         this.isLoading = false;
         this.cd.detectChanges();
       }
     });
   }
 
-  // Step 1: Start the Job
   startWork(ticketId: number) {
     this.processingId = ticketId;
+    
     this.ticketService.startTicket(ticketId).subscribe({
       next: () => {
-        // Refresh list to see status change to 'IN_PROGRESS'
-        this.loadTasks();
+        // Success: Ticket moves to 'IN_PROGRESS', so it leaves this list
+        this.loadInbox();
         this.processingId = null;
+        alert('Work Started! Ticket moved to "Active Tasks".');
       },
       error: (err) => {
         console.error(err);
-        alert('Could not start ticket.');
-        this.processingId = null;
-      }
-    });
-  }
-
-  // Step 2: Finish the Job
-  completeWork(ticketId: number) {
-    if(!confirm('Are you sure this task is 100% complete?')) return;
-
-    this.processingId = ticketId;
-    this.ticketService.completeTicket(ticketId).subscribe({
-      next: () => {
-        alert('Ticket Marked as Completed!');
-        this.loadTasks(); // Ticket should disappear from this list
-        this.processingId = null;
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Action failed.');
+        alert('Failed to start ticket.');
         this.processingId = null;
       }
     });

@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <h1>System Overview</h1>
+  <p class="subtitle">Real-time metrics for all department activities.</p>
+
+  @if (isLoading) {
+    <div class="loading">Loading dashboard...</div>
+  }
+
+  @if (!isLoading && stats) {
+    <div class="stats-grid">
+      
+      <div class="stat-card purple">
+        <h3>Total Tickets</h3>
+        <div class="value">{{ stats.total_tickets }}</div>
+      </div>
+
+      <div class="stat-card orange">
+        <h3>Pending Review</h3>
+        <div class="value">{{ stats.pending }}</div>
+      </div>
+
+      <div class="stat-card blue">
+        <h3>Assigned to SDC</h3>
+        <div class="value">{{ stats.approved }}</div>
+      </div>
+
+      <div class="stat-card green">
+        <h3>Completed</h3>
+        <div class="value">{{ stats.completed }}</div>
+      </div>
+
+    </div>
+  }
+</div>

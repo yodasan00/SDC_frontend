@@ -1,89 +1,65 @@
 <div class="pending-container">
-
-  <!-- Header -->
+  
   <div class="header">
     <h2>Pending Approvals</h2>
-    <p>Review and take action on department requests.</p>
+    <p>Review incoming requests and assign them to technical teams.</p>
   </div>
 
-  <!-- Loading -->
   @if (isLoading) {
     <div class="loading-spinner">
-      Loading pending tickets...
+      <span class="spinner-icon">⏳</span> Loading pending tickets...
     </div>
   }
 
-  <!-- Table -->
   @if (!isLoading) {
     <div class="table-responsive">
       <table class="ticket-table">
-
-        <!-- TABLE HEADER -->
         <thead>
           <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Created By</th>
-            <th>Department</th>
-            <th>Date</th>
-            <th>Actions</th>
+            <th style="width: 80px;">ID</th>
+            <th style="width: 40%;">Issue Details</th>
+            <th>Requester</th>
+            <th style="text-align: right;">Action</th>
           </tr>
         </thead>
-
-        <!-- TABLE BODY -->
         <tbody>
-          @for (ticket of pendingTickets; track ticket.id; let i = $index) {
+          @for (ticket of pendingTickets; track ticket.id) {
             <tr>
-
-              <!-- AUTO-INCREMENT SERIAL NUMBER -->
-              <td>{{ i + 1 }}</td>
-
-              <!-- TITLE -->
               <td>
-                <span class="ticket-title">{{ ticket.title }}</span>
-                <div class="ticket-desc">{{ ticket.description }}</div>
+                <span class="id-badge">#{{ ticket.id }}</span>
               </td>
-
-              <!-- CREATED BY -->
+              
               <td>
-                {{ ticket.created_by_name || ('User ID: ' + ticket.created_by) }}
+                <div class="ticket-title">{{ ticket.title }}</div>
+                <div class="ticket-desc">{{ ticket.description | slice:0:70 }}...</div>
+                <div class="ticket-date">
+                  📅 {{ ticket.created_at | date:'mediumDate' }}
+                </div>
               </td>
-
-              <!-- DEPARTMENT -->
+              
               <td>
-                {{ ticket.department_name || '-' }}
+                <div class="user-info">
+                  <span class="user-icon">👤</span>
+                  {{ ticket.created_by_name || 'User ' + ticket.created_by }}
+                </div>
               </td>
-
-              <!-- DATE -->
-              <td>
-                {{ ticket.created_at | date:'mediumDate' }}
+              
+              <td style="text-align: right;">
+                <a [routerLink]="['/dit/approve', ticket.id]" class="btn-review">
+                  <span>Review Ticket</span>
+                  <span class="arrow">→</span>
+                </a>
               </td>
-
-              <!-- ACTIONS -->
-            <td>
-              <div class="action-buttons">
-                <button class="btn-view" [routerLink]="['/dit/ticket', ticket.id]">
-                👁️ Details
-                </button>
-
-                <button class="btn-approve" (click)="approve(ticket.id)">✓</button>
-                <button class="btn-reject" (click)="reject(ticket.id)">✕</button>
-    
-              </div>
-            </td>
-
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="empty-state">
-                No pending tickets found. Good job!
+              <td colspan="4" class="empty-state">
+                🎉 No pending tickets! You are all caught up.
               </td>
             </tr>
           }
         </tbody>
-
       </table>
     </div>
   }
-
 </div>

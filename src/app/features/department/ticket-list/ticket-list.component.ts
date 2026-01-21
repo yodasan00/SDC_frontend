@@ -1,5 +1,4 @@
 
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Import this
 import { CommonModule } from '@angular/common';
 import { TicketService, Ticket } from '../../../core/services/ticket.service';
@@ -15,14 +14,16 @@ import { RouterLink } from '@angular/router';
 export class TicketListComponent implements OnInit {
   tickets: Ticket[] = [];
   isLoading = true;
+  currentUserRole: string = '';
 
   constructor(
     private ticketService: TicketService,
-    private cd: ChangeDetectorRef // <--- 2. Inject it here
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
     this.loadTickets();
+    
   }
 
   loadTickets() {

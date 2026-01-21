@@ -1,12 +1,14 @@
-<div class="pending-container">
+<div class="inbox-container">
   
   <div class="header">
-    <h2>Task Queue</h2>
-    <p>Manage tickets assigned to the State Data Centre.</p>
+    <h2>Team Inbox</h2>
+    <p>Tickets assigned to your domain awaiting action.</p>
   </div>
 
   @if (isLoading) {
-    <div class="loading-spinner">Loading tasks...</div>
+    <div class="loading-spinner">
+      Loading tasks...
+    </div>
   }
 
   @if (!isLoading) {
@@ -14,51 +16,48 @@
       <table class="ticket-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th style="width: 80px;">ID</th>
+            <th style="width: 50%;">Issue Details</th>
+            <th>Date Assigned</th>
+            <th style="text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
-          @for (task of tasks; track task.id) {
+          @for (ticket of inboxTickets; track ticket.id) {
             <tr>
-              <td>#{{ task.id }}</td>
               <td>
-                <span class="ticket-title">{{ task.title }}</span>
-                <span class="ticket-desc">{{ task.description }}</span>
+                <span class="id-badge">#{{ ticket.id }}</span>
               </td>
+              
               <td>
-                <span class="status-badge" 
-                      [class.status-approved]="task.status === 'APPROVED'"
-                      [class.status-progress]="task.status === 'IN_PROGRESS'">
-                  {{ task.status }}
-                </span>
+                <div class="ticket-title">{{ ticket.title }}</div>
+                <div class="ticket-desc">{{ ticket.description | slice:0:80 }}...</div>
+                
+                <div class="ticket-meta">
+                  <span class="user-badge">
+                    👤 {{ ticket.created_by_name || 'User ' + ticket.created_by }}
+                  </span>
+                </div>
               </td>
+              
               <td>
-                @if (task.status === 'APPROVED') {
-                  <button 
-                    class="btn-start" 
-                    (click)="startWork(task.id)"
-                    [disabled]="processingId === task.id">
-                    @if(processingId === task.id) { ... } @else { ▶ Start Work }
-                  </button>
-                }
-
-                @if (task.status === 'IN_PROGRESS') {
-                  <button 
-                    class="btn-complete" 
-                    (click)="completeWork(task.id)"
-                    [disabled]="processingId === task.id">
-                    @if(processingId === task.id) { ... } @else { ✅ Finish }
-                  </button>
-                }
-
+                <div class="ticket-date">
+                  📅 {{ ticket.created_at | date:'mediumDate' }}
+                </div>
+              </td>
+              
+              <td style="text-align: right;">
+                <a [routerLink]="['/sdc/work', ticket.id]" class="btn-open">
+                  <span>Open Workspace</span>
+                  <span class="arrow">→</span>
+                </a>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-state">No active tasks. You are all caught up!</td>
+              <td colspan="4" class="empty-state">
+                🎉 No new tickets pending for your team. Good job!
+              </td>
             </tr>
           }
         </tbody>

@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TicketService, Ticket } from '../../../core/services/ticket.service';
 import { RouterLink } from '@angular/router';
+import { TicketService, Ticket, DomainOption } from '../../../core/services/ticket.service'; // Import DomainOption
 
 @Component({
   selector: 'app-dit-pending',
@@ -12,8 +12,9 @@ import { RouterLink } from '@angular/router';
 })
 export class DitPendingComponent implements OnInit {
   pendingTickets: Ticket[] = [];
+  domainOptions: DomainOption[] = []; // Store backend domains here
   isLoading = true;
-  processingId: number | null = null; // To show spinner on specific button
+  processingId: number | null = null;
 
   constructor(
     private ticketService: TicketService,
@@ -22,6 +23,7 @@ export class DitPendingComponent implements OnInit {
 
   ngOnInit() {
     this.loadPendingTickets();
+    this.loadDomains(); // Fetch domains when component loads
   }
 
   loadPendingTickets() {
@@ -40,14 +42,33 @@ export class DitPendingComponent implements OnInit {
     });
   }
 
-  approve(ticketId: number) {
-    if (!confirm('Are you sure you want to APPROVE this ticket?')) return;
+  // NEW: Fetch domains from backend
+  loadDomains() {
+    this.ticketService.getDomains().subscribe({
+      next: (data) => {
+        this.domainOptions = data;
+         this.cd.detectChanges();
+      },
+      error: (err) => console.error('Failed to load domains', err)
+    });
+  }
+
+  approve(ticketId: number, selectElem: HTMLSelectElement) {
+    const domain = selectElem.value;
+
+    if (!domain) {
+      alert('Please select a Technical Domain (Team) to forward this ticket.');
+      return;
+    }
+
+    if (!confirm(`Approve ticket #${ticketId} and forward to ${domain} team?`)) return;
     
     this.processingId = ticketId;
-    this.ticketService.approveTicket(ticketId).subscribe({
+    
+    this.ticketService.approveAndForward(ticketId, domain).subscribe({
       next: () => {
-        alert('Ticket Approved!');
-        this.loadPendingTickets(); // Refresh list
+        alert('Ticket Approved & Forwarded!');
+        this.loadPendingTickets();
         this.processingId = null;
       },
       error: (err) => {
@@ -65,7 +86,7 @@ export class DitPendingComponent implements OnInit {
     this.ticketService.rejectTicket(ticketId).subscribe({
       next: () => {
         alert('Ticket Rejected.');
-        this.loadPendingTickets(); // Refresh list
+        this.loadPendingTickets();
         this.processingId = null;
       },
       error: (err) => {

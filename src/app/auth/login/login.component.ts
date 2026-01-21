@@ -18,8 +18,6 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-// Inside login.component.ts
-
 onSubmit() {
   this.isLoading = true;
   this.errorMessage = '';
@@ -31,8 +29,7 @@ onSubmit() {
   
       console.log('Login Success! Full Response:', res);
       console.log('Role received:', res.role); 
-  
-      // Normalize the role to lowercase just in case
+
       const role = res.role ? res.role.toLowerCase() : '';
 
       switch(role) {
@@ -47,7 +44,7 @@ onSubmit() {
           this.router.navigate(['/sdc/home']);
           break;
         default:
-          console.error('Unknown Role:', role); // This will tell you if the role is wrong
+          console.error('Unknown Role:', role); 
           this.errorMessage = `Login successful, but unknown role: ${role}`;
       }
     },

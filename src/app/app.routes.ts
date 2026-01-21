@@ -15,6 +15,8 @@ import { SdcActiveComponent } from './features/sdc/sdc-active/sdc-active.compone
 import { TicketDetailsComponent } from './features/shared/ticket-details/ticket-details.component';
 import { DitHistoryComponent } from './features/dit/dit-history/dit-history.component';
 import { SdcHistoryComponent } from './features/sdc/sdc-history/sdc-history.component';
+import { DitApprovalComponent } from './features/dit/dit-approval/dit-approval.component';
+import { SdcWorkspaceComponent } from './features/sdc/sdc-workspace/sdc-workspace.component';
 
 
 export const routes: Routes = [
@@ -44,6 +46,7 @@ export const routes: Routes = [
       { path: 'home', component: DitHomeComponent },
       { path: 'pending', component: DitPendingComponent },
       { path: 'ticket/:id', component: TicketDetailsComponent },
+      { path: 'approve/:id', component: DitApprovalComponent },
       { path: 'history', component: DitHistoryComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
@@ -58,6 +61,7 @@ export const routes: Routes = [
       { path: 'pending', component: SdcPendingComponent }, 
       { path: 'active', component: SdcActiveComponent },
       { path: 'ticket/:id', component: TicketDetailsComponent },
+      { path: 'work/:id', component: SdcWorkspaceComponent },
       { path: 'history', component: SdcHistoryComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]

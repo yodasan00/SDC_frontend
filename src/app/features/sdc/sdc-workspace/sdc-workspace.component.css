@@ -1,0 +1,38 @@
+.workspace-container { max-width: 800px; margin: 2rem auto; }
+.ticket-card { background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); overflow: hidden; }
+
+/* Status Bar */
+.status-bar { padding: 1rem; color: white; text-align: center; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+.approved { background: #3498db; }
+.in_progress { background: #f39c12; }
+
+/* Details */
+.details { padding: 2rem; }
+.details h1 { margin-top: 0; color: #2c3e50; }
+.desc { font-size: 1.1rem; line-height: 1.6; color: #555; margin-bottom: 2rem; }
+.remarks { background: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; }
+.download-btn { display: inline-block; background: #ecf0f1; padding: 10px 20px; border-radius: 20px; color: #333; text-decoration: none; font-weight: bold; margin-top: 1rem; }
+.download-btn:hover { background: #dcdcdc; }
+
+/* Footer Actions */
+.action-footer { background: #f8f9fa; padding: 1.5rem; text-align: center; border-top: 1px solid #eee; }
+.btn-action { padding: 15px 30px; font-size: 1.1rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; transition: transform 0.2s; color: white; width: 100%; max-width: 300px; }
+.btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+
+.start { background: linear-gradient(to right, #3498db, #2980b9); }
+.complete { background: linear-gradient(to right, #27ae60, #219150); }
+.initial-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.revert {
+  background: #e74c3c; /* Red color for caution */
+  font-size: 0.9rem;
+  max-width: 250px;
+}
+.revert:hover {
+  background: #c0392b;
+}

@@ -46,7 +46,7 @@ export class SdcActiveComponent implements OnInit {
     this.ticketService.completeTicket(ticketId).subscribe({
       next: () => {
         alert('Great job! Ticket marked as Completed.');
-        this.loadActiveTasks(); // Refresh list to remove the completed item
+        this.loadActiveTasks();
         this.processingId = null;
       },
       error: (err) => {

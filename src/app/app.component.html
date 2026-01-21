@@ -1,0 +1,14 @@
+<router-outlet></router-outlet>
+
+@if (modalState$ | async; as state) {
+  <app-custom-modal
+    [isOpen]="state.isOpen"
+    [title]="state.title"
+    [message]="state.message"
+    [type]="state.type"
+    [showInput]="state.showInput || false"
+    [confirmText]="state.confirmText || 'OK'"
+    (confirm)="onConfirm($event)"
+    (cancel)="onCancel()"
+  ></app-custom-modal>
+}

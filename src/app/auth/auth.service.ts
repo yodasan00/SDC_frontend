@@ -8,11 +8,10 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  // Update with your actual Django URL
   private apiUrl = 'http://127.0.0.1:8000/api/auth/';
   private userSubject = new BehaviorSubject<any>(null);
   
-  // 1. Inject PLATFORM_ID to check where we are running
+
   constructor(
     private http: HttpClient, 
     private router: Router,
@@ -21,10 +20,11 @@ export class AuthService {
     this.loadUserFromStorage();
   }
 
+  user$ = this.userSubject.asObservable();
+
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}login/`, credentials).pipe(
       tap(response => {
-        // 2. Only save to localStorage if we are in the Browser
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('access_token', response.access);
           localStorage.setItem('user_data', JSON.stringify(response));
@@ -35,7 +35,6 @@ export class AuthService {
   }
 
   private loadUserFromStorage() {
-    // 3. Only read from localStorage if we are in the Browser
     if (isPlatformBrowser(this.platformId)) {
       const userData = localStorage.getItem('user_data');
       if (userData) {
@@ -45,10 +44,12 @@ export class AuthService {
   }
 
   getToken() {
-    // 4. Safe check for token
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('access_token');
     }
     return null;
   }
+
+  
+
 }

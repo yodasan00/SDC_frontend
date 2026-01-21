@@ -1,76 +1,141 @@
+/* --- Layout Container --- */
 .pending-container {
-  padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-.header h2 { color: #2c3e50; margin-bottom: 0.5rem; }
-.header p { color: #7f8c8d; margin-bottom: 2rem; }
+/* --- Header Section --- */
+.header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
 
-/* Table Styles (Reused for consistency) */
+.header h2 {
+  color: #2c3e50;
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.header p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* --- Loading Spinner --- */
+.loading-spinner {
+  text-align: center;
+  padding: 3rem;
+  color: #95a5a6;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* --- Table Wrapper (Card Style) --- */
 .table-responsive {
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  overflow: hidden;
-  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* Handles horizontal scroll on small screens */
+  border: 1px solid #f0f0f0;
 }
 
-.ticket-table { width: 100%; border-collapse: collapse; }
+/* --- Table Styles --- */
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px; /* Prevents squishing on mobile */
+}
+
 .ticket-table th {
   background-color: #f8f9fa;
   color: #7f8c8d;
-  font-weight: 600;
-  text-transform: uppercase;
   font-size: 0.85rem;
-  padding: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1.2rem 1rem;
   text-align: left;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid #eee;
 }
 
 .ticket-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #ecf0f1;
-  vertical-align: top; /* Align to top for descriptions */
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+  color: #34495e;
 }
 
-.ticket-title { font-weight: 600; color: #2c3e50; display: block; }
-.ticket-desc { font-size: 0.9rem; color: #7f8c8d; margin-top: 4px; }
-.empty-state { text-align: center; padding: 3rem; color: #95a5a6; font-style: italic; }
-
-/* ACTION BUTTONS */
-.action-buttons {
-  display: flex;
-  gap: 10px;
+.ticket-table tr:hover {
+  background-color: #fafbfc;
 }
 
-.btn-approve {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 8px 16px;
+/* --- Cell Content Styles --- */
+.id-badge {
+  background-color: #eceff1;
+  color: #546e7a;
+  padding: 4px 8px;
   border-radius: 4px;
-  cursor: pointer;
+  font-family: 'Consolas', monospace;
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: background 0.2s;
 }
 
-.btn-approve:hover:not(:disabled) { background-color: #219150; }
+.ticket-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
 
-.btn-reject {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
+.ticket-desc {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.ticket-date {
+  font-size: 0.8rem;
+  color: #bdc3c7;
+  font-weight: 500;
+}
+
+/* --- Action Button (The Link) --- */
+.btn-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #e3f2fd; /* Light Blue Background */
+  color: #1976d2; /* Strong Blue Text */
   padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 50px; /* Pill shape */
+  text-decoration: none;
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
-.btn-reject:hover:not(:disabled) { background-color: #c0392b; }
+.btn-review:hover {
+  background-color: #1976d2;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(25, 118, 210, 0.2);
+}
 
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.btn-review:active {
+  transform: translateY(0);
+}
+
+/* --- Empty State --- */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #95a5a6;
+  font-style: italic;
+  font-size: 1.1rem;
+  background-color: #fff;
 }

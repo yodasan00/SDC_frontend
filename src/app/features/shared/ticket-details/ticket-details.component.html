@@ -3,42 +3,74 @@
   <div class="ticket-header">
     <div class="top-row">
       <h2>#{{ ticket.id }} - {{ ticket.title }}</h2>
-      <span class="status-badge">{{ ticket.status }}</span>
+      <span class="status-badge" [class]="ticket.status.toLowerCase()">
+        {{ ticket.status.replace('_', ' ') }}
+      </span>
     </div>
+    
+    <div class="meta-row">
+      <span><strong>Requester:</strong> {{ ticket.created_by_name }}</span>
+      <span><strong>Created:</strong> {{ ticket.created_at | date:'medium' }}</span>
+      <span *ngIf="ticket.domain && ticket.domain !== 'NONE'">
+        <strong>Assigned To:</strong> {{ ticket.domain }}
+      </span>
+    </div>
+
     <p class="description">{{ ticket.description }}</p>
-    <div class="meta">Created on {{ ticket.created_at | date:'medium' }}</div>
+
+    <div class="extras-section">
+      
+      @if (ticket.attachment) {
+        <div class="attachment-box">
+          <a [href]="ticket.attachment" target="_blank" class="download-link">
+            📎 View/Download Attachment
+          </a>
+        </div>
+      }
+
+      @if (ticket.pm_remarks) {
+        <div class="pm-remarks-box">
+          <strong>📝 Project Manager Remarks:</strong>
+          <p>{{ ticket.pm_remarks }}</p>
+        </div>
+      }
+    </div>
   </div>
 
   <div class="tabs">
-    <button [class.active]="activeTab === 'comments'" (click)="activeTab = 'comments'">
-      💬 Comments ({{ comments.length }})
-    </button>
+    @if (currentUserRole !== 'DEPARTMENT') {
+      <button [class.active]="activeTab === 'comments'" (click)="activeTab = 'comments'">
+        💬 Comments ({{ comments.length }})
+      </button>
+    }
     <button [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'">
       📜 History Logs
     </button>
   </div>
 
-  <div class="tab-content" *ngIf="activeTab === 'comments'">
-    
-    <div class="comments-list">
-      @for (c of comments; track c.id) {
-        <div class="comment-bubble">
-          <div class="comment-meta">
-            <strong>{{ c.user }}</strong> 
-            <span>{{ c.created_at | date:'short' }}</span>
+  @if (currentUserRole !== 'DEPARTMENT') {
+    <div class="tab-content" *ngIf="activeTab === 'comments'">
+      
+      <div class="comments-list">
+        @for (c of comments; track c.id) {
+          <div class="comment-bubble">
+            <div class="comment-meta">
+              <strong>{{ c.user }}</strong> 
+              <span>{{ c.created_at | date:'short' }}</span>
+            </div>
+            <div class="comment-text">{{ c.comment }}</div>
           </div>
-          <div class="comment-text">{{ c.comment }}</div>
-        </div>
-      } @empty {
-        <div class="empty-state">No comments yet. Start the conversation!</div>
-      }
-    </div>
+        } @empty {
+          <div class="empty-state">No comments yet.</div>
+        }
+      </div>
 
-    <div class="comment-input">
-      <textarea [(ngModel)]="newCommentText" placeholder="Type a message..."></textarea>
-      <button (click)="postComment()" [disabled]="!newCommentText.trim()">Send</button>
+      <div class="comment-input">
+        <textarea [(ngModel)]="newCommentText" placeholder="Internal team notes..."></textarea>
+        <button (click)="postComment()" [disabled]="!newCommentText.trim()">Post Note</button>
+      </div>
     </div>
-  </div>
+  }
 
   <div class="tab-content" *ngIf="activeTab === 'logs'">
     <table class="logs-table">
@@ -47,22 +79,36 @@
           <th>Time</th>
           <th>User</th>
           <th>Action</th>
-        </tr>
+          <th>Status Change</th>
+          <th>Remarks</th> </tr>
       </thead>
       <tbody>
         @for (log of logs; track log.id) {
           <tr>
             <td>{{ log.timestamp | date:'short' }}</td>
             <td>{{ log.user }}</td>
+            <td>{{ log.action }}</td>
+            
             <td>
-              {{ log.action }}
-              @if (log.old_status) {
-                <span>({{ log.old_status }} ➝ {{ log.new_status }})</span>
+              @if (log.old_status && log.new_status) {
+                <span class="status-mini">{{ log.old_status }}</span> 
+                ➝ 
+                <span class="status-mini">{{ log.new_status }}</span>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </td>
+
+            <td class="remarks-cell">
+              @if (log.remarks) {
+                {{ log.remarks }}
+              } @else {
+                <span class="text-muted italic">No remarks</span>
               }
             </td>
           </tr>
         } @empty {
-           <tr><td colspan="3" class="empty-state">No history logs found.</td></tr>
+           <tr><td colspan="5" class="empty-state">No history found.</td></tr>
         }
       </tbody>
     </table>

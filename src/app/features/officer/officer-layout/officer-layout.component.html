@@ -1,0 +1,40 @@
+<div class="layout-wrapper" [class.sidebar-collapsed]="!isSidebarOpen">
+  
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h2>Officer Console</h2>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/officer/home" routerLinkActive="active">
+          <span class="icon">📊</span>
+          <span class="link-text">Dashboard Stats</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/officer/tickets" routerLinkActive="active">
+          <span class="icon">🔎</span>
+          <span class="link-text">Audit Registry</span>
+        </a>
+      </li>
+      
+      <li class="mt-auto">
+        <a routerLink="/login">
+          <span class="icon">🚪</span>
+          <span class="link-text">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <main class="main-container">
+    <app-header [title]="'System Audit & Monitoring'" (toggleSidebar)="toggleSidebar()"></app-header>
+    
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+    
+    <app-footer></app-footer>
+  </main>
+</div>

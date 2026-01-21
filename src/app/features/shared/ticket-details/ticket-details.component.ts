@@ -8,6 +8,7 @@ import {
   TicketComment, 
   AuditLog 
 } from '../../../core/services/ticket.service';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-ticket-details',
@@ -20,6 +21,7 @@ export class TicketDetailsComponent implements OnInit {
   ticket: Ticket | null = null;
   comments: TicketComment[] = [];
   logs: AuditLog[] = [];
+  currentUserRole: string = '';
   
   newCommentText: string = '';
   activeTab: string = 'comments';
@@ -28,10 +30,16 @@ export class TicketDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private ticketService: TicketService,
-    private cd: ChangeDetectorRef // <--- 2. Inject it here
+    private cd: ChangeDetectorRef,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // console.log('Injected AuthService:', this.authService);
+    // this.authService.user$.subscribe(user => {
+    // this.currentUserRole = user?.role ?? '';
+    // });
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadData(id);

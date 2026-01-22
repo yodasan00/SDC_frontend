@@ -1,0 +1,141 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="header">
+      <h2>User Registration</h2>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <!-- Username -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          placeholder="Enter your username"
+        >
+        <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="error">
+          Username is required.
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="Enter your email"
+        >
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error">
+          <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required.</div>
+          <div *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email.</div>
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label for="phone_number">Phone Number</label>
+        <input
+          type="text"
+          id="phone_number"
+          formControlName="phone_number"
+          placeholder="Enter your phone number"
+        >
+        <div *ngIf="registerForm.get('phone_number')?.invalid && registerForm.get('phone_number')?.touched" class="error">
+          Phone number is required.
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="••••••••"
+        >
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error">
+          <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required.</div>
+          <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters.</div>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          placeholder="••••••••"
+        >
+        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="error">
+          <div *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
+            Confirm Password is required.
+          </div>
+        </div>
+        <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="error">
+          Passwords do not match.
+        </div>
+      </div>
+
+      <!-- Role -->
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" formControlName="role">
+          <option value="">Select Role</option>
+          <option *ngFor="let role of roles" [value]="role.value">
+            {{ role.display }}
+          </option>
+        </select>
+        <div *ngIf="registerForm.get('role')?.invalid && registerForm.get('role')?.touched" class="error">
+          Role is required.
+        </div>
+      </div>
+
+      <!-- Department (DB Fetched) -->
+      <div class="form-group" *ngIf="showDepartment">
+        <label for="department">Department</label>
+        <select id="department" formControlName="department">
+          <option value="">Select Department</option>
+          <option *ngFor="let dept of departments" [value]="dept">
+            {{ dept }}
+          </option>
+        </select>
+        <div *ngIf="registerForm.get('department')?.invalid && registerForm.get('department')?.touched" class="error">
+          Department is required for Department User.
+        </div>
+      </div>
+
+      <!-- Domain (DB Fetched) -->
+      <div class="form-group" *ngIf="showDomain">
+        <label for="domain_name">Domain</label>
+        <select id="domain_name" formControlName="domain_name">
+          <option value="">Select Domain</option>
+          <option *ngFor="let domain of domainChoices" [value]="domain.value">
+            {{ domain.display }}
+          </option>
+        </select>
+        <div *ngIf="registerForm.get('domain_name')?.invalid && registerForm.get('domain_name')?.touched" class="error">
+          Domain is required for SDC Staff.
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert error">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" [disabled]="registerForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Register</span>
+        <span *ngIf="isLoading">Registering...</span>
+      </button>
+
+    </form>
+  </div>
+</div>

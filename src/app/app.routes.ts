@@ -21,7 +21,7 @@ import path from 'node:path';
 import { OfficerLayoutComponent } from './features/officer/officer-layout/officer-layout.component';
 import { OfficerDashboardComponent } from './features/officer/officer-dashboard/officer-dashboard.component';
 import { OfficerSearchComponent } from './features/officer/officer-search/officer-search.component';
-
+import { RegisterComponent } from './features/auth/register/register.component';
 
 
 export const routes: Routes = [
@@ -30,6 +30,9 @@ export const routes: Routes = [
   
   // 2. The Login Page
   { path: 'login', component: LoginComponent },
+
+
+  { path: 'register', component: RegisterComponent },
 
   // 3. Protected Department Routes
   { 

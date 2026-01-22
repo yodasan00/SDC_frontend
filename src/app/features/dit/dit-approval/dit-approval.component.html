@@ -1,8 +1,18 @@
 <div class="approval-container">
   
   <div class="header">
-    <a routerLink="/dit/pending" class="back-link">← Back to List</a>
-    <h2>Review Ticket #{{ ticket?.id }}</h2>
+    <div class="header-left">
+      <a routerLink="/dit/pending" class="back-link">← Back to List</a>
+      <h2>Review Ticket #{{ ticket?.id }}</h2>
+    </div>
+
+    <div class="header-right">
+      @if (ticket) {
+        <a [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">
+          📜 View Audit Logs
+        </a>
+      }
+    </div>
   </div>
 
   @if (ticket) {

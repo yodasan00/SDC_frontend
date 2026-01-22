@@ -203,3 +203,42 @@ button:disabled { opacity: 0.6; cursor: not-allowed; }
   margin: 0 auto 1rem; animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+/* --- Header Updates --- */
+.header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between; /* Pushes button to the right */
+  align-items: flex-end; /* Aligns bottom */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* --- Log Button Style --- */
+.btn-logs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid #dcdfe6;
+  color: #555;
+  padding: 8px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.btn-logs:hover {
+  background-color: #f8f9fa;
+  border-color: #3498db;
+  color: #3498db;
+  transform: translateY(-1px);
+}

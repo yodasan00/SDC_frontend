@@ -22,7 +22,6 @@ export class RegisterService {
 
   constructor(private http: HttpClient) {}
 
-  // ---------------- REGISTER ----------------
   register(data: RegisterRequest): Observable<any> {
     return this.http.post(this.baseUrl + 'register/', data).pipe(
       catchError((error: HttpErrorResponse) => {

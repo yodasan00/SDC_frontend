@@ -1,39 +1,132 @@
-.details-container { padding: 20px; max-width: 900px; margin: 0 auto; }
-
-/* Header Card */
-.ticket-header { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 25px; }
-.top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-.ticket-header h2 { margin: 0; color: #2c3e50; }
-
-.status-badge { background: #3498db; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; letter-spacing: 0.5px; }
-.description { font-size: 1.05rem; line-height: 1.6; color: #34495e; }
-.meta { color: #95a5a6; font-size: 0.9rem; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
-
-/* Tabs */
-.tabs { display: flex; border-bottom: 2px solid #ecf0f1; margin-bottom: 20px; gap: 20px; }
-.tabs button {
-  background: none; border: none; padding: 10px 5px; cursor: pointer; font-size: 1rem; color: #7f8c8d;
-  border-bottom: 3px solid transparent; transition: all 0.2s;
+/* --- Container --- */
+.details-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }
-.tabs button:hover { color: #2c3e50; }
-.tabs button.active { color: #2c3e50; border-bottom-color: #3498db; font-weight: 600; }
 
-/* Comments */
-.comment-bubble { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; }
-.comment-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #95a5a6; margin-bottom: 8px; }
-.comment-meta strong { color: #2c3e50; font-size: 0.95rem; }
-.comment-text { color: #34495e; white-space: pre-wrap; line-height: 1.5; }
+/* --- Loading --- */
+.loading-state { text-align: center; padding: 4rem; color: #95a5a6; }
+.spinner {
+  width: 40px; height: 40px; border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db; border-radius: 50%;
+  margin: 0 auto 1rem; animation: spin 1s linear infinite;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.comment-input { margin-top: 25px; display: flex; gap: 10px; background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; }
-.comment-input textarea { flex: 1; padding: 12px; border-radius: 4px; border: 1px solid #bdc3c7; min-height: 60px; font-family: inherit; resize: vertical; }
-.comment-input button { background: #27ae60; color: white; border: none; padding: 0 25px; border-radius: 4px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
-.comment-input button:hover:not(:disabled) { background: #219150; }
-.comment-input button:disabled { background: #bdc3c7; cursor: not-allowed; }
+/* --- Header Card --- */
+.header-card {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+  border: 1px solid #eee;
+}
 
-/* Logs Table */
-.logs-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
-.logs-table th, .logs-table td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
-.logs-table th { background: #f8f9fa; color: #7f8c8d; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+.header-top {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+}
 
-.empty-state { text-align: center; padding: 40px; color: #bdc3c7; font-style: italic; }
-.loading-spinner { text-align: center; padding: 20px; color: #3498db; }
+h2 { margin: 0; color: #2c3e50; font-size: 1.5rem; }
+.ticket-id { color: #95a5a6; font-weight: 400; margin-right: 8px; }
+
+.status-badge {
+  padding: 6px 12px; border-radius: 20px; font-weight: 700; text-transform: uppercase; font-size: 0.85rem;
+}
+.status-badge.pending { background: #fff3cd; color: #856404; }
+.status-badge.approved { background: #e3f2fd; color: #1565c0; }
+.status-badge.in_progress { background: #fff8e1; color: #f39c12; border: 1px solid #ffe0b2; }
+.status-badge.completed { background: #d4edda; color: #155724; }
+.status-badge.rejected { background: #ffebee; color: #c62828; }
+
+.meta-row { display: flex; gap: 2rem; color: #555; font-size: 0.95rem; }
+.meta-item .label { font-weight: 600; color: #7f8c8d; margin-right: 5px; }
+
+/* --- Grid Layout --- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* Right side wider for logs */
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+
+/* --- General Card Styles --- */
+.content-card, .tabs-card {
+  background: white; border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  border: 1px solid #eee; overflow: hidden;
+}
+
+.content-card { padding: 2rem; }
+.content-card h3 { margin-top: 0; color: #2c3e50; font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+
+.description-text { line-height: 1.6; color: #34495e; margin-bottom: 2rem; }
+
+/* --- Attachments & Notes --- */
+.attachment-section { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee; }
+.attachment-section label { display: block; font-weight: 700; font-size: 0.8rem; color: #95a5a6; text-transform: uppercase; margin-bottom: 8px; }
+
+.file-box {
+  display: flex; align-items: center; background: #f8f9fa; padding: 10px; border-radius: 8px; gap: 10px;
+}
+.btn-download { text-decoration: none; background: #3498db; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+
+.pm-note { background: #fffde7; padding: 1rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #fbc02d; font-size: 0.95rem; }
+.pm-note p { margin: 5px 0 0 0; color: #5d4037; }
+
+/* --- Tabs --- */
+.tab-header {
+  display: flex; background: #f8f9fa; border-bottom: 1px solid #eee;
+}
+.tab-btn {
+  flex: 1; padding: 15px; border: none; background: transparent; font-weight: 600; color: #7f8c8d; cursor: pointer; transition: all 0.2s; border-bottom: 3px solid transparent;
+}
+.tab-btn:hover { background: #f0f0f0; color: #2c3e50; }
+.tab-btn.active { background: white; color: #3498db; border-bottom-color: #3498db; }
+
+.tab-body { padding: 0; }
+
+/* --- Logs Table --- */
+.table-responsive { max-height: 500px; overflow-y: auto; }
+.logs-table { width: 100%; border-collapse: collapse; }
+.logs-table th { background: #fafbfc; padding: 12px 15px; text-align: left; font-size: 0.8rem; color: #95a5a6; text-transform: uppercase; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #eee; }
+.logs-table td { padding: 12px 15px; border-bottom: 1px solid #f5f5f5; vertical-align: top; font-size: 0.9rem; color: #34495e; }
+
+.time-cell .date { font-weight: 600; color: #2c3e50; }
+.time-cell .time { font-size: 0.8rem; color: #95a5a6; }
+.user-cell { font-weight: 500; }
+
+.action-badge {
+  display: inline-block; background: #eceff1; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: #546e7a; margin-bottom: 4px;
+}
+.status-change { font-size: 0.8rem; color: #7f8c8d; }
+.remarks-cell { font-style: italic; color: #607d8b; }
+
+/* --- Comments (Chat Style) --- */
+.comments-container { display: flex; flex-direction: column; height: 500px; }
+.comments-list { flex-grow: 1; overflow-y: auto; padding: 1.5rem; background: #fcfcfc; }
+
+.comment-bubble {
+  background: white; border: 1px solid #eee; padding: 12px; border-radius: 8px; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.comment-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 6px; }
+.comment-header .author { font-weight: 700; color: #3498db; }
+.comment-header .date { color: #bdc3c7; }
+.comment-body { color: #2c3e50; font-size: 0.95rem; line-height: 1.4; }
+
+.empty-state { text-align: center; color: #bdc3c7; margin-top: 2rem; font-style: italic; }
+
+.comment-input-area {
+  padding: 1rem; background: white; border-top: 1px solid #eee; display: flex; gap: 10px;
+}
+.comment-input-area textarea {
+  flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; resize: none; font-family: inherit;
+}
+.comment-input-area button {
+  padding: 0 20px; background: #3498db; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
+}
+.comment-input-area button:disabled { background: #bdc3c7; cursor: not-allowed; }

@@ -1,119 +1,163 @@
-<div class="details-container" *ngIf="ticket">
+<div class="details-container">
   
-  <div class="ticket-header">
-    <div class="top-row">
-      <h2>#{{ ticket.id }} - {{ ticket.title }}</h2>
-      <span class="status-badge" [class]="ticket.status.toLowerCase()">
-        {{ ticket.status.replace('_', ' ') }}
-      </span>
-    </div>
-    
-    <div class="meta-row">
-      <span><strong>Requester:</strong> {{ ticket.created_by_name }}</span>
-      <span><strong>Created:</strong> {{ ticket.created_at | date:'medium' }}</span>
-      <span *ngIf="ticket.domain && ticket.domain !== 'NONE'">
-        <strong>Assigned To:</strong> {{ ticket.domain }}
-      </span>
-    </div>
-
-    <p class="description">{{ ticket.description }}</p>
-
-    <div class="extras-section">
-      
-      @if (ticket.attachment) {
-        <div class="attachment-box">
-          <a [href]="ticket.attachment" target="_blank" class="download-link">
-            📎 View/Download Attachment
-          </a>
-        </div>
-      }
-
-      @if (ticket.pm_remarks) {
-        <div class="pm-remarks-box">
-          <strong>📝 Project Manager Remarks:</strong>
-          <p>{{ ticket.pm_remarks }}</p>
-        </div>
-      }
-    </div>
-  </div>
-
-  <div class="tabs">
-    @if (currentUserRole !== 'DEPARTMENT') {
-      <button [class.active]="activeTab === 'comments'" (click)="activeTab = 'comments'">
-        💬 Comments ({{ comments.length }})
-      </button>
-    }
-    <button [class.active]="activeTab === 'logs'" (click)="activeTab = 'logs'">
-      📜 History Logs
-    </button>
-  </div>
-
-  @if (currentUserRole !== 'DEPARTMENT') {
-    <div class="tab-content" *ngIf="activeTab === 'comments'">
-      
-      <div class="comments-list">
-        @for (c of comments; track c.id) {
-          <div class="comment-bubble">
-            <div class="comment-meta">
-              <strong>{{ c.user }}</strong> 
-              <span>{{ c.created_at | date:'short' }}</span>
-            </div>
-            <div class="comment-text">{{ c.comment }}</div>
-          </div>
-        } @empty {
-          <div class="empty-state">No comments yet.</div>
-        }
-      </div>
-
-      <div class="comment-input">
-        <textarea [(ngModel)]="newCommentText" placeholder="Internal team notes..."></textarea>
-        <button (click)="postComment()" [disabled]="!newCommentText.trim()">Post Note</button>
-      </div>
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading ticket history...</p>
     </div>
   }
 
-  <div class="tab-content" *ngIf="activeTab === 'logs'">
-    <table class="logs-table">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>User</th>
-          <th>Action</th>
-          <th>Status Change</th>
-          <th>Remarks</th> </tr>
-      </thead>
-      <tbody>
-        @for (log of logs; track log.id) {
-          <tr>
-            <td>{{ log.timestamp | date:'short' }}</td>
-            <td>{{ log.user }}</td>
-            <td>{{ log.action }}</td>
+  @if (!isLoading && ticket) {
+    
+    <div class="header-card">
+      <div class="header-top">
+        <h2>
+          <span class="ticket-id">#{{ ticket.id }}</span> 
+          {{ ticket.title }}
+        </h2>
+        <span class="status-badge" [class]="ticket.status.toLowerCase()">
+          {{ ticket.status.replace('_', ' ') }}
+        </span>
+      </div>
+
+      <div class="meta-row">
+        <div class="meta-item">
+          <span class="label">👤 Requester:</span>
+          <span class="value">{{ ticket.created_by_name }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">📅 Created:</span>
+          <span class="value">{{ ticket.created_at | date:'mediumDate' }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">🏢 Domain:</span>
+          <span class="value">{{ ticket.domain !== 'NONE' ? ticket.domain : 'Unassigned' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      
+      <div class="info-column">
+        <div class="content-card">
+          <h3>Description</h3>
+          <p class="description-text">{{ ticket.description }}</p>
+
+          @if (ticket.attachment) {
+            <div class="attachment-section">
+              <label>Attachment</label>
+              <div class="file-box">
+                <span class="icon">📎</span>
+                <span class="filename">Attached Document</span>
+                <a [href]="ticket.attachment" target="_blank" class="btn-download">Download</a>
+              </div>
+            </div>
+          }
+
+          @if (ticket.pm_remarks) {
+            <div class="pm-note">
+              <strong>📝 PM Remarks:</strong>
+              <p>{{ ticket.pm_remarks }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="activity-column">
+        <div class="tabs-card">
+          
+          <div class="tab-header">
+            <button 
+              class="tab-btn" 
+              [class.active]="activeTab === 'logs'" 
+              (click)="activeTab = 'logs'">
+              📜 Audit Logs
+            </button>
             
-            <td>
-              @if (log.old_status && log.new_status) {
-                <span class="status-mini">{{ log.old_status }}</span> 
-                ➝ 
-                <span class="status-mini">{{ log.new_status }}</span>
-              } @else {
-                <span class="text-muted">-</span>
-              }
-            </td>
+            @if (currentUserRole !== 'DEPARTMENT') {
+              <button 
+                class="tab-btn" 
+                [class.active]="activeTab === 'comments'" 
+                (click)="activeTab = 'comments'">
+                💬 Internal Chat ({{ comments.length }})
+              </button>
+            }
+          </div>
+          
 
-            <td class="remarks-cell">
-              @if (log.remarks) {
-                {{ log.remarks }}
-              } @else {
-                <span class="text-muted italic">No remarks</span>
-              }
-            </td>
-          </tr>
-        } @empty {
-           <tr><td colspan="5" class="empty-state">No history found.</td></tr>
-        }
-      </tbody>
-    </table>
-  </div>
+          <div class="tab-body" *ngIf="activeTab === 'logs'">
+            <div class="table-responsive">
+              <table class="logs-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Details / Remarks</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (log of logs; track log.id) {
+                    <tr>
+                      <td class="time-cell">
+                        <div class="date">{{ log.timestamp | date:'MMM d' }}</div>
+                        <div class="time">{{ log.timestamp | date:'shortTime' }}</div>
+                      </td>
+                      <td class="user-cell">{{ log.user }}</td>
+                      <td>
+                        <span class="action-badge">{{ log.action }}</span>
+                        @if (log.old_status && log.new_status) {
+                          <div class="status-change">
+                            {{ log.old_status }} ➝ <strong>{{ log.new_status }}</strong>
+                          </div>
+                        }
+                      </td>
+                      <td class="remarks-cell">
+                        {{ log.remarks || '-' }}
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="4" class="empty">No logs available.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <div class="tab-body" *ngIf="activeTab === 'comments' && currentUserRole !== 'DEPARTMENT'">
+            <div class="comments-container">
+              
+              <div class="comments-list">
+                @for (c of comments; track c.id) {
+                  <div class="comment-bubble">
+                    <div class="comment-header">
+                      <span class="author">{{ c.user }}</span>
+                      <span class="date">{{ c.created_at | date:'short' }}</span>
+                    </div>
+                    <div class="comment-body">{{ c.comment }}</div>
+                  </div>
+                } @empty {
+                  <div class="empty-state">No internal notes yet.</div>
+                }
+              </div>
 
+              <div class="comment-input-area">
+                <textarea 
+                  [(ngModel)]="newCommentText" 
+                  placeholder="Type an internal note..." 
+                  rows="2"
+                ></textarea>
+                <button (click)="postComment()" [disabled]="!newCommentText.trim()">
+                  Send ➤
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  }
 </div>
-
-<div *ngIf="isLoading" class="loading-spinner">Loading details...</div>

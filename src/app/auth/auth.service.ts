@@ -1,5 +1,5 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core'; // <--- Import these
-import { isPlatformBrowser } from '@angular/common';             // <--- Import this
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api/auth/';
   private userSubject = new BehaviorSubject<any>(null);
-  
 
   constructor(
     private http: HttpClient, 
@@ -34,6 +33,20 @@ export class AuthService {
     );
   }
 
+  getRole(): string {
+    const user = this.userSubject.value;
+    return user?.role || ''; 
+  }
+
+  logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user_data');
+    }
+    this.userSubject.next(null);
+    this.router.navigate(['/auth/login']);
+  }
+
   private loadUserFromStorage() {
     if (isPlatformBrowser(this.platformId)) {
       const userData = localStorage.getItem('user_data');
@@ -49,7 +62,4 @@ export class AuthService {
     }
     return null;
   }
-
-  
-
 }

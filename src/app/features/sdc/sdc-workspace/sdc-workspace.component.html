@@ -1,57 +1,117 @@
 <div class="workspace-container">
+  
   <div class="header">
-    <a routerLink="/sdc/pending" class="back-link">← Back to Inbox</a>
-    <h2>Technical Workspace</h2>
+    <div class="header-left">
+      <a routerLink="/sdc/pending" class="back-link">← Back to Inbox</a>
+      <h2>Technical Workspace <span class="ticket-id">#{{ ticket?.id }}</span></h2>
+    </div>
+    
+    <div class="header-right">
+      @if (ticket) {
+        <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-logs">
+          📜 View Full Logs
+        </a>
+      }
+    </div>
   </div>
 
   @if (ticket) {
-    <div class="ticket-card">
-      <div class="status-bar" [class]="ticket.status.toLowerCase()">
-        Current Status: <strong>{{ ticket.status.replace('_', ' ') }}</strong>
-      </div>
-
-      <div class="details">
-        <h1>{{ ticket.title }}</h1>
-        <p class="desc">{{ ticket.description }}</p>
+    <div class="content-grid">
+      
+      <div class="details-card">
         
-        <div class="meta-info">
-          <p><strong>Requester:</strong> {{ ticket.created_by_name }}</p>
-          <p><strong>Created:</strong> {{ ticket.created_at | date:'medium' }}</p>
-          @if (ticket.pm_remarks) {
-            <p class="remarks"><strong>PM Remarks:</strong> {{ ticket.pm_remarks }}</p>
-          }
+        <div class="status-banner" [class]="ticket.status.toLowerCase()">
+          <span class="status-icon">
+            @if(ticket.status === 'APPROVED') { ⏳ }
+            @if(ticket.status === 'IN_PROGRESS') { ⚡ }
+            @if(ticket.status === 'COMPLETED') { ✅ }
+          </span>
+          <span class="status-text">{{ ticket.status.replace('_', ' ') }}</span>
         </div>
 
-        @if (ticket.attachment) {
-           <a [href]="ticket.attachment" target="_blank" class="download-btn">
-             📂 View Attachment
-           </a>
-        }
-      </div>
-
-      <div class="action-footer">
-        
-        @if (ticket.status === 'APPROVED') {
-          <div class="initial-actions">
-            
-            <button class="btn-action start" (click)="startWork()" [disabled]="isProcessing">
-              ⚡ Start Work
-            </button>
-
-            <button class="btn-action revert" (click)="revertWork()" [disabled]="isProcessing">
-              ↩ Wrong Team? Revert to PM
-            </button>
-
+        <div class="card-body">
+          <h1 class="ticket-title">{{ ticket.title }}</h1>
+          
+          <div class="meta-data">
+            <span class="meta-item">👤 <strong>Requester:</strong> {{ ticket.created_by_name }}</span>
+            <span class="meta-item">📅 <strong>Date:</strong> {{ ticket.created_at | date:'mediumDate' }}</span>
+            <span class="meta-item">🏷️ <strong>Domain:</strong> {{ ticket.domain }}</span>
           </div>
-        }
 
-        @if (ticket.status === 'IN_PROGRESS') {
-          <button class="btn-action complete" (click)="completeWork()" [disabled]="isProcessing">
-            ✅ Mark as Completed
-          </button>
-        }
+          <div class="description-box">
+            <label>Description</label>
+            <p>{{ ticket.description }}</p>
+          </div>
 
+          @if (ticket.pm_remarks) {
+            <div class="pm-remarks">
+              <label>📝 Note from Project Manager:</label>
+              <p>"{{ ticket.pm_remarks }}"</p>
+            </div>
+          }
+
+          @if (ticket.attachment) {
+            <div class="attachment-section">
+              <label>Attachment</label>
+              <div class="file-box">
+                <span class="file-icon">📎</span>
+                <span class="filename">Attached Document</span>
+                <a [href]="ticket.attachment" target="_blank" class="btn-download">
+                  👁️ View File
+                </a>
+              </div>
+            </div>
+          }
+        </div>
       </div>
+
+      <div class="action-card">
+        <div class="card-header">
+          <h3>⚡ Action Console</h3>
+        </div>
+        
+        <div class="card-body">
+          
+          @if (ticket.status === 'APPROVED') {
+            <div class="action-group">
+              <p class="action-hint">This ticket is assigned to your domain. You can start working now.</p>
+              
+              <button class="btn-action start" (click)="startWork()" [disabled]="isProcessing">
+                Start Work
+              </button>
+
+              <div class="divider"><span>OR</span></div>
+
+              <button class="btn-action revert" (click)="revertWork()" [disabled]="isProcessing">
+                ↩ Wrong Domain? Revert to PM
+              </button>
+            </div>
+          }
+
+          @if (ticket.status === 'IN_PROGRESS') {
+            <div class="action-group">
+              <div class="active-indicator">
+                <span class="pulse"></span> Work In Progress
+              </div>
+              <p class="action-hint">Mark this ticket as complete when you are finished.</p>
+              
+              <button class="btn-action complete" (click)="completeWork()" [disabled]="isProcessing">
+                ✅ Mark as Completed
+              </button>
+            </div>
+          }
+
+          @if (ticket.status === 'COMPLETED') {
+            <div class="completed-state">
+              <div class="success-icon">🎉</div>
+              <h4>Work Done!</h4>
+              <p>This ticket has been closed.</p>
+            </div>
+          }
+
+        </div>
+      </div>
+
     </div>
   }
 </div>

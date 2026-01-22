@@ -35,11 +35,8 @@ export class TicketDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // console.log('Injected AuthService:', this.authService);
-    // this.authService.user$.subscribe(user => {
-    // this.currentUserRole = user?.role ?? '';
-    // });
-
+    this.currentUserRole = this.authService.getRole();
+    this.activeTab = 'logs'; 
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadData(id);
@@ -50,14 +47,11 @@ export class TicketDetailsComponent implements OnInit {
 
   loadData(id: number): void {
     this.isLoading = true;
-    
-    // 1. Fetch Ticket (MAIN DATA)
     this.ticketService.getTicketById(id).subscribe({
       next: (data) => {
         this.ticket = data;
         console.log('Ticket loaded:', data);
         
-        // 3. STOP LOADING IMMEDIATELY when ticket arrives
         this.isLoading = false; 
         this.cd.detectChanges(); // Force screen update
       },
@@ -77,7 +71,7 @@ export class TicketDetailsComponent implements OnInit {
       error: (err) => console.error('Error fetching comments:', err)
     });
 
-    // 3. Fetch Audit Logs (Background)
+
     this.ticketService.getAuditLogs(id).subscribe({
       next: (data) => {
         this.logs = data;

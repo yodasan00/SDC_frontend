@@ -188,3 +188,39 @@
   font-style: italic;
   font-size: 1.1rem;
 }
+
+/* Title Link Styling */
+.ticket-link {
+  text-decoration: none;
+  display: block;
+}
+
+.ticket-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  transition: color 0.2s;
+}
+
+.ticket-link:hover .ticket-title {
+  color: #3498db; /* Blue on hover */
+}
+
+/* Workspace Button */
+.btn-workspace {
+  text-decoration: none;
+  background-color: #3498db;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.btn-workspace:hover {
+  background-color: #2980b9;
+}

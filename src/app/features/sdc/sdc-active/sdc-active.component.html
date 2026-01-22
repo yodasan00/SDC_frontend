@@ -2,7 +2,7 @@
   
   <div class="header">
     <h2>Active Work in Progress</h2>
-    <p>Tasks you are currently working on. Mark them complete when done.</p>
+    <p>Tasks you are currently working on. Click "Open Workspace" to view details or complete.</p>
   </div>
 
   @if (isLoading) {
@@ -19,7 +19,7 @@
             <th style="width: 80px;">ID</th>
             <th style="width: 50%;">Task Details</th>
             <th>Status</th>
-            <th style="text-align: right;">Actions</th>
+            <th style="text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -30,7 +30,10 @@
               </td>
               
               <td>
-                <div class="ticket-title">{{ ticket.title }}</div>
+                <a [routerLink]="['/sdc/workspace', ticket.id]" class="ticket-link">
+                  <div class="ticket-title">{{ ticket.title }}</div>
+                </a>
+                
                 <div class="ticket-desc">{{ ticket.description | slice:0:80 }}...</div>
                 <div class="ticket-meta">
                   <span class="date-badge">📅 Started: {{ ticket.created_at | date:'shortDate' }}</span>
@@ -45,13 +48,11 @@
               
               <td class="action-cell">
                 <div class="action-buttons">
-                  <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-chat" title="View Logs & Chat">
-                    💬 Logs
+                  
+                  <a [routerLink]="['/sdc/work', ticket.id]" class="btn-workspace">
+                    -> Open Workspace
                   </a>
 
-                  <button class="btn-complete" (click)="completeWork(ticket.id)" title="Mark as Completed">
-                    ✅ Finish
-                  </button>
                 </div>
               </td>
             </tr>

@@ -43,6 +43,9 @@ onSubmit() {
         case 'sdc':
           this.router.navigate(['/sdc/home']);
           break;
+        case 'officer':
+          this.router.navigate(['/officer/dashboard']);
+          break;
         default:
           console.error('Unknown Role:', role); 
           this.errorMessage = `Login successful, but unknown role: ${role}`;

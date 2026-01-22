@@ -7,13 +7,14 @@
 
     <ul class="nav-links">
       <li>
-        <a routerLink="/officer/home" routerLinkActive="active">
+        <a routerLink="/officer/dashboard" routerLinkActive="active">
           <span class="icon">📊</span>
-          <span class="link-text">Dashboard Stats</span>
+          <span class="link-text">System Overview</span>
         </a>
       </li>
+
       <li>
-        <a routerLink="/officer/tickets" routerLinkActive="active">
+        <a routerLink="/officer/search" routerLinkActive="active">
           <span class="icon">🔎</span>
           <span class="link-text">Audit Registry</span>
         </a>
@@ -29,12 +30,17 @@
   </nav>
 
   <main class="main-container">
-    <app-header [title]="'System Audit & Monitoring'" (toggleSidebar)="toggleSidebar()"></app-header>
     
+    <app-header 
+      [title]="'Audit & Monitoring'" 
+      (toggleSidebar)="toggleSidebar()">
+    </app-header>
+
     <div class="content-wrapper">
       <router-outlet></router-outlet>
     </div>
-    
+
     <app-footer></app-footer>
+
   </main>
 </div>

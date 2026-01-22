@@ -17,6 +17,11 @@ import { DitHistoryComponent } from './features/dit/dit-history/dit-history.comp
 import { SdcHistoryComponent } from './features/sdc/sdc-history/sdc-history.component';
 import { DitApprovalComponent } from './features/dit/dit-approval/dit-approval.component';
 import { SdcWorkspaceComponent } from './features/sdc/sdc-workspace/sdc-workspace.component';
+import path from 'node:path';
+import { OfficerLayoutComponent } from './features/officer/officer-layout/officer-layout.component';
+import { OfficerDashboardComponent } from './features/officer/officer-dashboard/officer-dashboard.component';
+import { OfficerSearchComponent } from './features/officer/officer-search/officer-search.component';
+
 
 
 export const routes: Routes = [
@@ -68,6 +73,19 @@ export const routes: Routes = [
     , canActivate: [authGuard]
   },
 
+  {
+    path: 'officer',
+    component: OfficerLayoutComponent, // The Shell/Sidebar
+    canActivate: [authGuard],
+    data: { role: 'OFFICER' },
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: OfficerDashboardComponent }, // Stats
+      { path: 'search', component: OfficerSearchComponent },       // Registry
+      { path: 'ticket/:id', component: TicketDetailsComponent }    // Read-only Details
+    ]
+  },
+ 
   // 4. Fallback (404)
   { path: '**', redirectTo: 'login' }
 ];

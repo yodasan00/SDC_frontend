@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TicketService, Ticket } from '../../../core/services/ticket.service';
+import { ModalService } from '../../../core/services/modal.service'; // <--- Import
 
 @Component({
   selector: 'app-sdc-workspace',
@@ -19,7 +20,8 @@ export class SdcWorkspaceComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private ticketService: TicketService,
-    private cd: ChangeDetectorRef // <--- Injected
+    private cd: ChangeDetectorRef,
+    private modalService: ModalService // <--- Inject
   ) {}
 
   ngOnInit() {
@@ -33,74 +35,124 @@ export class SdcWorkspaceComponent implements OnInit {
       next: (t) => {
         this.ticket = t;
         this.isLoading = false;
-        this.cd.detectChanges(); // <--- Force Update
+        this.cd.detectChanges();
       },
       error: () => {
-        alert("Ticket not found");
-        this.router.navigate(['/sdc/inbox']);
+        // REPLACEMENT: Error Modal
+        this.modalService.open({
+          title: 'Not Found',
+          message: 'This ticket does not exist or you do not have permission to view it.',
+          type: 'error'
+        }, () => {
+           this.router.navigate(['/sdc/inbox']);
+        });
       }
     });
   }
 
   startWork() {
-    if(!confirm('Start working on this ticket?')) return;
-    
-    this.isProcessing = true;
-    this.cd.detectChanges(); // Disable button
+    // REPLACEMENT: Confirm Modal
+    this.modalService.open({
+      title: 'Start Work',
+      message: 'Are you ready to start working on this ticket?',
+      type: 'confirm',
+      confirmText: 'Start Now'
+    }, () => {
+      
+      // LOGIC MOVED INSIDE CALLBACK
+      this.isProcessing = true;
+      this.cd.detectChanges();
 
-    this.ticketService.startTicket(this.ticket!.id).subscribe({
-      next: () => {
-        alert('Work Started!');
-        // Reload to update status (Approved -> In Progress)
-        this.loadTicket(this.ticket!.id);
-        this.isProcessing = false;
-        this.cd.detectChanges();
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.cd.detectChanges();
-      }
+      this.ticketService.startTicket(this.ticket!.id).subscribe({
+        next: () => {
+          this.modalService.open({
+            title: 'Work Started',
+            message: 'Status updated to In Progress.',
+            type: 'success'
+          });
+          
+          // Reload to update status
+          this.loadTicket(this.ticket!.id);
+          this.isProcessing = false;
+          this.cd.detectChanges();
+        },
+        error: () => {
+          this.isProcessing = false;
+          this.cd.detectChanges();
+          this.modalService.open({ title: 'Error', message: 'Failed to start work.', type: 'error' });
+        }
+      });
     });
   }
 
   completeWork() {
-    if(!confirm('Mark this ticket as COMPLETED?')) return;
-    
-    this.isProcessing = true;
-    this.cd.detectChanges();
+    // REPLACEMENT: Confirm Modal
+    this.modalService.open({
+      title: 'Complete Ticket',
+      message: 'Are you sure you want to mark this ticket as COMPLETED?',
+      type: 'confirm',
+      confirmText: 'Mark Complete'
+    }, () => {
+      
+      // LOGIC MOVED INSIDE CALLBACK
+      this.isProcessing = true;
+      this.cd.detectChanges();
 
-    this.ticketService.completeTicket(this.ticket!.id).subscribe({
-      next: () => {
-        alert('Ticket Completed Successfully!');
-        this.router.navigate(['/sdc/pending']);
-      },
-      error: () => {
-        this.isProcessing = false;
-        this.cd.detectChanges();
-      }
+      this.ticketService.completeTicket(this.ticket!.id).subscribe({
+        next: () => {
+          this.modalService.open({
+            title: 'Success!',
+            message: 'Ticket completed successfully.',
+            type: 'success'
+          }, () => {
+             this.router.navigate(['/sdc/pending']);
+          });
+        },
+        error: () => {
+          this.isProcessing = false;
+          this.cd.detectChanges();
+          this.modalService.open({ title: 'Error', message: 'Failed to complete ticket.', type: 'error' });
+        }
+      });
     });
   }
 
   revertWork() {
-  const reason = prompt("Please state why you are reverting this ticket (e.g., 'Wrong Domain'):");
-  
-  if (!reason) return;
+    // REPLACEMENT: Prompt Modal (Input Logic)
+    this.modalService.open({
+      title: 'Revert to Manager',
+      message: 'Please explain why you are sending this ticket back (e.g., Wrong Domain):',
+      type: 'confirm',
+      confirmText: 'Revert Ticket',
+      showInput: true // <--- Enables the Textarea
+    }, (reason) => {
+      
+      // Validation: Check if reason was entered
+      if (!reason) {
+        this.modalService.open({ title: 'Required', message: 'You must provide a reason to revert.', type: 'error' });
+        return;
+      }
 
-  if(!confirm('Send this ticket back to the Project Manager?')) return;
-
-  this.isProcessing = true;
-  this.cd.detectChanges();
-
-  this.ticketService.revertTicket(this.ticket!.id, reason).subscribe({
-    next: () => {
-      alert('Ticket Reverted to PM.');
-      this.router.navigate(['/sdc/pending']); // Go back to inbox
-    },
-    error: (err) => {
-      alert('Failed to revert ticket.');
-      this.isProcessing = false;
+      // LOGIC MOVED INSIDE CALLBACK
+      this.isProcessing = true;
       this.cd.detectChanges();
-    }
-  });
-}
+
+      this.ticketService.revertTicket(this.ticket!.id, reason).subscribe({
+        next: () => {
+          this.modalService.open({
+            title: 'Reverted',
+            message: 'Ticket has been sent back to the Project Manager.',
+            type: 'success'
+          }, () => {
+             this.router.navigate(['/sdc/pending']);
+          });
+        },
+        error: (err) => {
+          this.isProcessing = false;
+          this.cd.detectChanges();
+          this.modalService.open({ title: 'Error', message: 'Failed to revert ticket.', type: 'error' });
+        }
+      });
+    });
+  }
 }

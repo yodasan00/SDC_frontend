@@ -1,1 +1,24 @@
-<p>header works!</p>
+<header class="app-header">
+  
+  <div class="left-section">
+    <button class="menu-btn" (click)="onToggle()">
+      <span class="icon">☰</span>
+    </button>
+
+    <div class="brand-logo">
+      <div class="logo-icon">⚡</div> <span class="brand-text">SDC Desk</span>
+    </div>
+
+    <div class="vertical-divider"></div>
+
+    <h1 class="page-title">{{ title }}</h1>
+  </div>
+
+  <div class="right-section">
+    <span class="date">{{ currentDate | date:'mediumDate' }}</span>
+    
+    <div class="user-avatar">
+      <span>AD</span> </div>
+  </div>
+
+</header>

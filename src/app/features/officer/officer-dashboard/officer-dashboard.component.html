@@ -1,31 +1,77 @@
-<div class="dashboard-container">
-  <h1>System Overview</h1>
-  <p class="subtitle">Real-time metrics for all department activities.</p>
+<div class="home-container">
+  
+  <div class="welcome-banner">
+    <div>
+      <h1>Officer Console Overview</h1>
+      <p>Real-time status monitoring of all departmental requests.</p>
+    </div>
+    <div class="banner-decoration">📊</div>
+  </div>
 
   @if (isLoading) {
-    <div class="loading">Loading dashboard...</div>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Aggregating system data...</p>
+    </div>
   }
 
   @if (!isLoading && stats) {
     <div class="stats-grid">
       
-      <div class="stat-card purple">
-        <h3>Total Tickets</h3>
-        <div class="value">{{ stats.total_tickets }}</div>
+      <div class="stat-card blue">
+        <div class="icon-wrapper">📂</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Tickets</span>
+          <span class="stat-value">{{ stats.total_tickets }}</span>
+        </div>
       </div>
 
       <div class="stat-card orange">
-        <h3>Pending Review</h3>
-        <div class="value">{{ stats.pending }}</div>
+        <div class="icon-wrapper">⏳</div>
+        <div class="stat-info">
+          <span class="stat-label">Pending Review</span>
+          <span class="stat-value">{{ stats.pending }}</span>
+        </div>
       </div>
 
-      <div class="stat-card blue">
-        <h3>Assigned to SDC</h3>
-        <div class="value">{{ stats.in_progress }}</div> </div>
-
       <div class="stat-card green">
-        <h3>Completed</h3>
-        <div class="value">{{ stats.completed }}</div>
+        <div class="icon-wrapper">✅</div>
+        <div class="stat-info">
+          <span class="stat-label">Approved</span>
+          <span class="stat-value">{{ stats.approved }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card red">
+        <div class="icon-wrapper">🚫</div>
+        <div class="stat-info">
+          <span class="stat-label">Rejected</span>
+          <span class="stat-value">{{ stats.rejected }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card purple">
+        <div class="icon-wrapper">⚙️</div>
+        <div class="stat-info">
+          <span class="stat-label">In Progress</span>
+          <span class="stat-value">{{ stats.in_progress || 0 }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card teal">
+        <div class="icon-wrapper">🏁</div>
+        <div class="stat-info">
+          <span class="stat-label">Completed</span>
+          <span class="stat-value">{{ stats.completed || 0 }}</span>
+        </div>
+      </div>
+
+      <div class="stat-card grey">
+        <div class="icon-wrapper">🔒</div>
+        <div class="stat-info">
+          <span class="stat-label">Closed</span>
+          <span class="stat-value">{{ stats.closed }}</span>
+        </div>
       </div>
 
     </div>

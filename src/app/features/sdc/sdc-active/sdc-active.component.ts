@@ -39,53 +39,12 @@ export class SdcActiveComponent implements OnInit {
         this.isLoading = false;
         this.cd.detectChanges();
         
-        // Optional: Error Modal for loading failure
         this.modalService.open({
             title: 'Connection Error', 
             message: 'Failed to load active tasks.', 
             type: 'error' 
         });
       }
-    });
-  }
-
-  completeWork(ticketId: number) {
-    // REPLACEMENT: Confirm Modal
-    this.modalService.open({
-      title: 'Complete Task',
-      message: 'Are you sure you want to mark this task as fully COMPLETED?',
-      type: 'confirm',
-      confirmText: 'Yes, Complete'
-    }, () => {
-      
-      // LOGIC MOVED INSIDE CALLBACK
-      this.processingId = ticketId;
-      this.cd.detectChanges();
-
-      this.ticketService.completeTicket(ticketId).subscribe({
-        next: () => {
-          // REPLACEMENT: Success Modal
-          this.modalService.open({
-            title: 'Great Job!',
-            message: 'Ticket has been marked as Completed successfully.',
-            type: 'success'
-          }, () => {
-             // Refresh data after modal closes
-             this.loadActiveTasks();
-             this.processingId = null;
-          });
-        },
-        error: (err) => {
-          console.error(err);
-          this.processingId = null;
-          this.cd.detectChanges();
-          this.modalService.open({
-            title: 'Action Failed',
-            message: 'Could not complete the ticket. Please try again.',
-            type: 'error'
-          });
-        }
-      });
     });
   }
 }

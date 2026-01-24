@@ -1,150 +1,146 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Import ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TicketService, Ticket, DomainOption } from '../../../core/services/ticket.service';
-import { ModalService } from '../../../core/services/modal.service'; // <--- Import
+import { SlaStatusDirective } from '../../../shared/directives/sla-status.directive';
+
+import { 
+  TicketService, 
+  Ticket, 
+  DomainOption, 
+  PriorityOption, 
+  TicketType, 
+  RequestType 
+} from '../../../core/services/ticket.service';
+
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-dit-approval',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SlaStatusDirective],
   templateUrl: './dit-approval.component.html',
   styleUrls: ['./dit-approval.component.css']
 })
 export class DitApprovalComponent implements OnInit {
   ticket: Ticket | null = null;
   domains: DomainOption[] = [];
+  priorities: PriorityOption[] = [];
   
-  selectedDomain: string = '';
-  remarks: string = '';
-  
-  isLoading = true;
+  ticketTypes: TicketType[] = [];
+  requestTypes: RequestType[] = [];
+
+  selectedDomain = '';
+  remarks = '';
   isProcessing = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private ticketService: TicketService,
-    private cd: ChangeDetectorRef,
-    private modalService: ModalService // <--- Inject
+    private modalService: ModalService,
+    private cd: ChangeDetectorRef // <--- 2. Inject ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadData(id);
+    if (id) {
+      this.loadTicket(id);
+    }
+    this.loadMetadata();
   }
 
-  loadData(id: number) {
-    // 1. Load Ticket
+  loadMetadata() {
+    this.ticketService.getDomains().subscribe(d => {
+      this.domains = d;
+      this.cd.detectChanges(); // <--- 3. Trigger detection
+    });
+
+    this.ticketService.getPriorities().subscribe(p => {
+      this.priorities = p;
+      this.cd.detectChanges();
+    });
+    
+    this.ticketService.getTicketTypes().subscribe(t => {
+      this.ticketTypes = t;
+      this.cd.detectChanges(); // Update view so getTypeName() works
+    });
+  }
+
+  loadTicket(id: number) {
     this.ticketService.getTicketById(id).subscribe({
       next: (t) => {
         this.ticket = t;
-        this.isLoading = false;
-        this.cd.detectChanges();
+        if (t.domain_value) this.selectedDomain = t.domain_value;
+
+        // If ticket has a Type ID, fetch the sub-categories
+        if (t.ticket_type) {
+           this.ticketService.getRequestTypes(t.ticket_type).subscribe(r => {
+             this.requestTypes = r;
+             this.cd.detectChanges(); // Update view so getRequestName() works
+           });
+        }
+        this.cd.detectChanges(); // <--- Trigger for ticket data load
       },
       error: () => {
-        this.isLoading = false;
-        this.cd.detectChanges();
-        // Optional: Add error modal here if load fails
-        this.modalService.open({ title: 'Error', message: 'Failed to load ticket details.', type: 'error' });
+        this.modalService.open({ title: 'Error', message: 'Ticket not found.', type: 'error' }, () => {
+          this.router.navigate(['/dit/pending']);
+        });
       }
     });
+  }
 
-    // 2. Load Domains
-    this.ticketService.getDomains().subscribe({
-      next: (d) => {
-        this.domains = d;
-        this.cd.detectChanges();
-      }
-    });
+  getTypeName(id?: number): string {
+    if (!id) return 'General';
+    const match = this.ticketTypes.find(t => t.id === id);
+    return match ? match.name : 'Unknown';
+  }
+
+  getRequestName(id?: number): string {
+    if (!id) return '';
+    const match = this.requestTypes.find(r => r.id === id);
+    return match ? match.name : '';
   }
 
   approve() {
-    // Validation Check
     if (!this.selectedDomain) {
-      this.modalService.open({
-        title: 'Missing Information',
-        message: 'Please select a Technical Domain before approving.',
-        type: 'error'
-      });
+      this.modalService.open({ title: 'Required', message: 'Please select a domain.', type: 'error' });
       return;
     }
-
-    // Confirmation Modal
-    this.modalService.open({
-      title: 'Confirm Approval',
-      message: `Are you sure you want to forward this ticket to the ${this.selectedDomain} team?`,
-      type: 'confirm',
-      confirmText: 'Approve & Forward'
-    }, () => {
-      
-      // LOGIC MOVED INSIDE CALLBACK
-      this.isProcessing = true;
-      this.cd.detectChanges(); // Show disabled state
-
-      this.ticketService.approveAndForward(this.ticket!.id, this.selectedDomain, this.remarks).subscribe({
+    this.isProcessing = true;
+    this.ticketService.approveAndForward(this.ticket!.id, this.selectedDomain, this.ticket!.priority, this.remarks)
+      .subscribe({
         next: () => {
-          this.modalService.open({
-            title: 'Success',
-            message: 'Ticket has been approved and forwarded successfully!',
-            type: 'success'
-          }, () => {
-            // Navigate after closing success modal
-            this.router.navigate(['/dit/pending']);
-          });
+          this.modalService.open({ title: 'Success', message: 'Ticket forwarded.', type: 'success' }, 
+          () => this.router.navigate(['/dit/pending']));
         },
-        error: (err) => {
+        error: () => {
           this.isProcessing = false;
-          this.cd.detectChanges(); // Re-enable buttons
-          
-          this.modalService.open({
-            title: 'Approval Failed',
-            message: 'An error occurred while approving the ticket. Please try again.',
-            type: 'error'
-          });
+          this.cd.detectChanges(); // Reset button state if error
+        }
+      });
+  }
+
+  reject() {
+    this.modalService.open({
+      title: 'Reject Ticket', message: 'Reason for rejection:', type: 'confirm', showInput: true
+    }, (reason) => {
+      if (!reason) return;
+      this.isProcessing = true;
+      this.ticketService.rejectTicket(this.ticket!.id, reason).subscribe({
+        next: () => this.router.navigate(['/dit/pending']),
+        error: () => {
+          this.isProcessing = false;
+          this.cd.detectChanges();
         }
       });
     });
   }
 
-  reject() {
-    // Determine the warning message based on whether remarks exist
-    const confirmMsg = this.remarks 
-      ? 'Are you sure you want to reject this ticket?' 
-      : 'You are rejecting this ticket without remarks. Are you sure?';
-
-    this.modalService.open({
-      title: 'Confirm Rejection',
-      message: confirmMsg,
-      type: 'confirm',
-      confirmText: 'Reject Ticket'
-    }, () => {
-      
-      // LOGIC MOVED INSIDE CALLBACK
-      this.isProcessing = true;
-      this.cd.detectChanges();
-
-      this.ticketService.rejectTicket(this.ticket!.id, this.remarks).subscribe({
-        next: () => {
-          this.modalService.open({
-            title: 'Rejected',
-            message: 'The ticket has been rejected.',
-            type: 'success'
-          }, () => {
-             this.router.navigate(['/dit/pending']);
-          });
-        },
-        error: () => {
-          this.isProcessing = false;
-          this.cd.detectChanges();
-          
-          this.modalService.open({
-            title: 'Rejection Failed',
-            message: 'Could not reject the ticket. Please try again.',
-            type: 'error'
-          });
-        }
+  closeTicket() {
+    this.modalService.open({ title: 'Close Ticket', message: 'Permanently close this ticket?', type: 'confirm' }, () => {
+      this.ticketService.closeTicket(this.ticket!.id).subscribe({
+        next: () => this.router.navigate(['/dit/history'])
       });
     });
   }

@@ -1,72 +1,104 @@
 <div class="create-container">
-  
-  <div class="form-card">
-    <div class="card-header">
-      <h2>Create New Ticket</h2>
-      <p>Describe your issue clearly so the technical team can help you.</p>
+  <div class="header">
+    <h2>Submit New Request</h2>
+    <p>Please fill in the details below to raise a new ticket.</p>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="ticket-form">
+    
+    <div class="form-group">
+      <label>Issue Title <span class="req">*</span></label>
+      <input 
+        type="text" 
+        [(ngModel)]="ticket.title" 
+        name="title" 
+        placeholder="e.g., Internet Connectivity Issue in Lab 3" 
+        required
+      >
     </div>
 
-    @if (successMessage) {
-      <div class="alert alert-success">{{ successMessage }}</div>
-    }
-    @if (errorMessage) {
-      <div class="alert alert-error">{{ errorMessage }}</div>
-    }
-
-    <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
       
-      <div class="form-group">
-        <label for="title">Issue Title</label>
-        <input 
-          id="title" 
-          type="text" 
-          formControlName="title" 
-          placeholder="e.g., Internet not working in Lab 2"
-          [class.invalid]="ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched"
-        >
-        @if (ticketForm.get('title')?.invalid && ticketForm.get('title')?.touched) {
-          <small class="error-text">Title is required (min 5 chars).</small>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="description">Detailed Description</label>
-        <textarea 
-          id="description" 
-          rows="5" 
-          formControlName="description" 
-          placeholder="Please provide details about the issue..."
-          [class.invalid]="ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched"
-        ></textarea>
-        @if (ticketForm.get('description')?.invalid && ticketForm.get('description')?.touched) {
-          <small class="error-text">Description is required (min 10 chars).</small>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="attachment">Attachment (Optional)</label>
-        <div class="file-upload-wrapper">
-          <input 
-            type="file" 
-            id="attachment" 
-            (change)="onFileSelected($event)"
-            accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-          >
-          <small class="hint-text">Supported: JPG, PNG, PDF (Max 5MB)</small>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button type="button" class="btn-cancel" routerLink="/department/my-tickets">Cancel</button>
-        <button type="submit" class="btn-submit" [disabled]="ticketForm.invalid || isSubmitting">
-          @if (isSubmitting) {
-            Submitting...
-          } @else {
-            Submit Ticket
+      <div class="form-group half">
+        <label>Priority <span class="req">*</span></label>
+        <select [(ngModel)]="ticket.priority" name="priority" required>
+          <option value="" disabled selected>-- Select Priority --</option>
+          @for (p of priorities; track p.code) {
+            <option [value]="p.code">{{ p.label }}</option>
           }
-        </button>
+        </select>
+        <small class="hint">Higher priority tickets require immediate attention.</small>
       </div>
 
-    </form>
-  </div>
+      <div class="form-group half">
+        <label>Affected End User (Optional)</label>
+        <input 
+          type="text" 
+          [(ngModel)]="ticket.affected_end_user" 
+          name="affected_end_user" 
+          placeholder="e.g. Dean of Science, or Lab 4 Students"
+        >
+      </div>
+
+    </div>
+
+    <div class="form-row">
+      
+      <div class="form-group half">
+        <label>Category <span class="req">*</span></label>
+        <select 
+          [(ngModel)]="ticket.ticket_type" 
+          name="ticket_type" 
+          (change)="onTypeChange()" 
+          required>
+          <option value="" disabled selected>-- Select Category --</option>
+          @for (type of ticketTypes; track type.id) {
+            <option [value]="type.id">{{ type.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group half">
+        <label>Specific Request</label>
+        <select 
+          [(ngModel)]="ticket.request_type" 
+          name="request_type" 
+          [disabled]="!requestTypes.length">
+          <option value="" disabled selected>
+            {{ requestTypes.length ? '-- Select Request Type --' : '-- Select Category First --' }}
+          </option>
+          @for (req of requestTypes; track req.id) {
+            <option [value]="req.id">{{ req.name }}</option>
+          }
+        </select>
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea 
+        [(ngModel)]="ticket.description" 
+        name="description" 
+        rows="5" 
+        placeholder="Describe the issue in detail..."
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Attachment (Optional)</label>
+      <div class="file-upload-wrapper">
+        <input type="file" (change)="onFileSelected($event)">
+        <small>Supported formats: PDF, JPG, PNG (Max 5MB)</small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Submit Request</span>
+        <span *ngIf="isSubmitting">Processing...</span>
+      </button>
+    </div>
+
+  </form>
 </div>

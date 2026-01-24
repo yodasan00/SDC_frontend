@@ -1,16 +1,14 @@
-<div class="approval-container">
+<div class="approval-container" [appSlaStatus]="ticket">
   
   <div class="header">
     <div class="header-left">
       <a routerLink="/dit/pending" class="back-link">← Back to List</a>
       <h2>Review Ticket #{{ ticket?.id }}</h2>
     </div>
-
+    
     <div class="header-right">
       @if (ticket) {
-        <a [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">
-          📜 View Audit Logs
-        </a>
+        <a [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">📜 Audit Logs</a>
       }
     </div>
   </div>
@@ -29,20 +27,26 @@
             <div class="value-title">{{ ticket.title }}</div>
           </div>
 
+          <div class="meta-row">
+            <div class="detail-group">
+                <label>Category</label>
+                <div class="value">
+                  {{ getTypeName(ticket.ticket_type) }} 
+                  
+                  <span *ngIf="ticket.request_type">
+                      → {{ getRequestName(ticket.request_type) }}
+                  </span>
+                </div>
+            </div>
+            <div class="detail-group">
+                <label>Affected User</label>
+                <div class="value">{{ ticket.affected_end_user || 'N/A' }}</div>
+            </div>
+          </div>
+
           <div class="detail-group">
             <label>Description</label>
             <div class="value-desc">{{ ticket.description }}</div>
-          </div>
-
-          <div class="meta-row">
-            <div class="detail-group">
-              <label>Requester</label>
-              <div class="value">{{ ticket.created_by_name }}</div>
-            </div>
-            <div class="detail-group">
-              <label>Submitted On</label>
-              <div class="value">{{ ticket.created_at | date:'medium' }}</div>
-            </div>
           </div>
 
           @if (ticket.attachment) {
@@ -50,10 +54,7 @@
               <label>Supporting Document</label>
               <div class="file-box">
                 <span class="file-icon">📄</span>
-                <span class="filename">Attachment Available</span>
-                <a [href]="ticket.attachment" target="_blank" class="btn-download">
-                  👁️ View File
-                </a>
+                <a [href]="ticket.attachment" target="_blank" class="btn-download">View File</a>
               </div>
             </div>
           }
@@ -66,43 +67,63 @@
         </div>
 
         <div class="card-body">
+          
           <div class="form-group">
-            <label>1. Select Technical Domain <span class="req">*</span></label>
+            <label>1. Confirm Priority (SLA)</label>
+            <select [(ngModel)]="ticket.priority" class="domain-select">
+              <option value="" disabled>Select Priority</option>
+              @for (p of priorities; track p.code) {
+                <option [value]="p.code">{{ p.label }}</option>
+              }
+            </select>
+            <small class="hint">Changing priority updates the SLA deadline.</small>
+          </div>
+
+          <div class="form-group">
+            <label>2. Assign Technical Domain <span class="req">*</span></label>
             <select [(ngModel)]="selectedDomain" class="domain-select">
               <option value="" disabled selected>-- Choose Team --</option>
-              @for (d of domains; track d.code) {
-                <option [value]="d.code">{{ d.label }}</option>
+              @for (d of domains; track d.id) {
+                <option [value]="d.value">{{ d.display }}</option>
               }
             </select>
           </div>
 
           <div class="form-group">
-            <label>2. Remarks / Instructions</label>
+            <label>3. Remarks / Instructions</label>
             <textarea 
               [(ngModel)]="remarks" 
-              rows="5" 
+              rows="4" 
               class="remarks-box"
-              placeholder="Add technical notes for the SDC team or a reason for rejection..."
+              placeholder="Add technical notes..."
             ></textarea>
           </div>
 
           <div class="action-buttons">
-            <button class="btn-approve" (click)="approve()" [disabled]="isProcessing">
-              <span class="icon">✓</span> Approve & Forward
-            </button>
-            
-            <button class="btn-reject" (click)="reject()" [disabled]="isProcessing">
-              <span class="icon">✕</span> Reject Request
-            </button>
+            @if (ticket.status === 'PENDING') {
+              <button class="btn-approve" (click)="approve()" [disabled]="isProcessing">
+                ✓ Approve & Forward
+              </button>
+              <button class="btn-reject" (click)="reject()" [disabled]="isProcessing">
+                ✕ Reject
+              </button>
+            }
+
+            @if (ticket.status === 'COMPLETED') {
+              <div class="close-alert">
+                 <p><strong>Status: Completed</strong> by SDC.</p>
+                 <button class="btn-close" (click)="closeTicket()" [disabled]="isProcessing">
+                    🔒 Verify & Close Ticket
+                 </button>
+              </div>
+            }
           </div>
+          
         </div>
       </div>
 
     </div>
   } @else {
-    <div class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading ticket details...</p>
-    </div>
+    <div class="loading-state"><p>Loading details...</p></div>
   }
 </div>

@@ -1,108 +1,187 @@
-/* --- Main Wrapper --- */
+/* =========================
+   1. VARIABLES & LAYOUT
+   ========================= */
+:host {
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 70px;
+  --header-height: 64px;
+  --primary-color: #3b82f6;      /* Bright Blue */
+  --sidebar-bg: #0f172a;         /* Dark Slate */
+  --sidebar-hover: #1e293b;      /* Lighter Slate */
+  --text-sidebar: #94a3b8;       /* Muted Text */
+  --text-sidebar-active: #ffffff;
+  --bg-main: #f1f5f9;            /* Light Gray Background */
+}
+
 .layout-wrapper {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background-color: #f4f6f8;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* --- Sidebar --- */
+/* =========================
+   2. SIDEBAR STYLING
+   ========================= */
 .sidebar {
-  width: 260px;
-  background-color: #2c3e50;
-  color: #ecf0f1;
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  color: var(--text-sidebar);
   display: flex;
   flex-direction: column;
-  /* Smooth transition for width and opacity */
-  transition: all 0.3s ease-in-out;
-  flex-shrink: 0;
-  white-space: nowrap; /* Prevents text wrapping while shrinking */
-  overflow: hidden;    /* Hides content as it shrinks */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
-/* --- Sidebar Header --- */
+/* Header (Logo Area) */
 .sidebar-header {
-  height: 64px;
+  height: var(--header-height);
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  background-color: #1a252f;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.2s;
+  letter-spacing: -0.5px;
 }
 
-/* --- Navigation Links --- */
+/* Navigation Links */
 .nav-links {
   list-style: none;
-  padding: 0;
-  margin: 1rem 0;
+  padding: 1rem 0.75rem;
+  margin: 0;
   display: flex;
   flex-direction: column;
+  gap: 4px;
   flex-grow: 1;
 }
 
 .nav-links li a {
   display: flex;
   align-items: center;
-  padding: 15px 25px;
-  color: #bdc3c7;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
   text-decoration: none;
+  color: var(--text-sidebar);
   font-weight: 500;
-  border-left: 4px solid transparent;
-  transition: all 0.2s;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
+/* Hover State */
 .nav-links li a:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #fff;
+  background-color: var(--sidebar-hover);
+  color: #e2e8f0;
+  transform: translateX(4px);
 }
 
+/* Active State */
 .nav-links li a.active {
-  background-color: rgba(52, 152, 219, 0.1);
-  color: #3498db;
-  border-left-color: #3498db;
+  background-color: var(--primary-color);
+  color: var(--text-sidebar-active);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); /* Blue Glow */
+}
+
+.nav-links li a.active .icon {
+  transform: scale(1.1);
 }
 
 .icon {
+  font-size: 1.2rem;
   min-width: 24px;
   text-align: center;
-  font-size: 1.2rem;
-  margin-right: 12px;
+  transition: transform 0.2s;
 }
 
+/* Bottom Links (Logout) */
 .mt-auto {
   margin-top: auto;
-  border-top: 1px solid #34495e;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
 }
 
-/* --- Main Content Area --- */
+/* =========================
+   3. MAIN CONTENT AREA
+   ========================= */
 .main-container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
-  /* Smooth transition if you want the content to slide over */
-  transition: margin-left 0.3s ease-in-out; 
+  overflow: hidden; /* Scroll happens inside content-wrapper */
+  position: relative;
 }
 
 .content-wrapper {
   flex-grow: 1;
-  overflow-y: auto;
   padding: 2rem;
+  overflow-y: auto; /* Scrollable content */
+  scroll-behavior: smooth;
 }
 
-/* --- COLLAPSED STATE (The Magic) --- */
+/* =========================
+   4. COLLAPSED STATE LOGIC
+   ========================= */
 .layout-wrapper.sidebar-collapsed .sidebar {
+  width: var(--sidebar-collapsed-width);
+}
+
+.layout-wrapper.sidebar-collapsed .sidebar-header {
+  justify-content: center;
+  padding: 0;
+}
+
+.layout-wrapper.sidebar-collapsed .sidebar-header h2 {
+  opacity: 0;
   width: 0;
-  padding: 0; /* Remove padding so it doesn't take up space */
-  opacity: 0; /* Fade out visual elements */
-  visibility: hidden; /* Hide from screen readers/clicks */
+  display: none;
+}
+
+.layout-wrapper.sidebar-collapsed .nav-links li a {
+  justify-content: center;
+  padding: 12px;
+}
+
+.layout-wrapper.sidebar-collapsed .link-text {
+  display: none;
+  opacity: 0;
+}
+
+.layout-wrapper.sidebar-collapsed .nav-links li a:hover {
+  transform: none; /* No shifting in collapsed mode */
+  background-color: var(--sidebar-hover);
+}
+
+/* =========================
+   5. RESPONSIVE (MOBILE)
+   ========================= */
+@media (max-width: 768px) {
+  .layout-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    transform: translateX(-100%); /* Hidden by default */
+  }
+
+  .layout-wrapper.sidebar-collapsed .sidebar {
+    transform: translateX(0); /* Show when toggled on mobile */
+    width: var(--sidebar-width); /* Full width on mobile when open */
+  }
 }

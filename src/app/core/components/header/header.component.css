@@ -1,0 +1,124 @@
+/* Container */
+.app-header {
+  background-color: #ffffff;
+  height: 64px; /* Matches Sidebar Header Height */
+  padding: 0 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Left Section */
+.left-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Menu Button */
+.menu-btn {
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.menu-btn:hover {
+  background-color: #f1f5f9;
+  color: #3b82f6; /* Brand Blue */
+  border-color: #cbd5e1;
+}
+
+.menu-btn .icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* Logo Styling */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.brand-text {
+  font-weight: 700;
+  color: #0f172a; /* Dark Slate */
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+
+/* Divider */
+.vertical-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #e2e8f0;
+  margin: 0 8px;
+}
+
+/* Page Title */
+.page-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Right Section */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.date {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: none; /* Hide on small mobile */
+}
+
+@media(min-width: 600px) { 
+  .date { display: block; } 
+}
+
+/* Avatar */
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #e2e8f0;
+}

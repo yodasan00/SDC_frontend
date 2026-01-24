@@ -1,0 +1,89 @@
+<div class="closure-container" [appSlaStatus]="ticket">
+  
+  <div class="header">
+    <div class="header-left">
+      <a routerLink="/dit/history" class="back-link">← Back to History</a>
+      <h2>Closure Workspace #{{ ticket?.id }}</h2>
+    </div>
+    <div class="header-right">
+      <a *ngIf="ticket" [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">📜 Audit Logs</a>
+    </div>
+  </div>
+
+  @if (ticket) {
+    <div class="content-grid">
+      
+      <div class="details-card">
+        <div class="card-header">
+          <h3>Ticket Overview</h3>
+          <span class="status-badge completed">READY FOR CLOSURE</span>
+        </div>
+        
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Subject</label>
+              <span>{{ ticket.title }}</span>
+            </div>
+            <div class="info-item">
+              <label>Assigned To</label>
+              <span>{{ ticket.domain_value || 'Technical Team' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Priority</label>
+              <span>{{ ticket.priority }}</span>
+            </div>
+          </div>
+
+          <div class="desc-box">
+            <label>Original Request:</label>
+            <p>{{ ticket.description }}</p>
+          </div>
+          
+          <div class="desc-box result-box">
+            <label>Resolution Status:</label>
+            <p>SDC Team has marked this work as <strong>Complete</strong>. Please verify the output before closing.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-card">
+        <div class="card-header">
+          <h3>✅ Verification Console</h3>
+        </div>
+        
+        <div class="card-body">
+          
+          <div class="sla-check">
+            <div class="check-icon">⏱️</div>
+            <div class="check-text">
+              <strong>SLA Compliance Check</strong>
+              <small>Review timestamps in Audit Log</small>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="form-group">
+            <label>Closure Remarks (Optional)</label>
+            <textarea [(ngModel)]="remarks" rows="3" placeholder="e.g. User confirmed issue resolved..."></textarea>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-verify" (click)="verifyAndClose()">
+              🔒 Verify & Close Ticket
+            </button>
+            
+            <button class="btn-reopen" (click)="reopenTicket()">
+              ↩ Work Incomplete? Reopen
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  } @else {
+    <div class="loading">Loading Workspace...</div>
+  }
+</div>

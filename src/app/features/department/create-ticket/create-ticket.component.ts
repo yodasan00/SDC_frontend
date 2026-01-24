@@ -1,69 +1,137 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { TicketService } from '../../../core/services/ticket.service';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+// Ensure this path matches where your TicketService is located
+import { TicketService, TicketType, RequestType, PriorityOption } from '../../../core/services/ticket.service';
+import { ModalService } from '../../../core/services/modal.service';
 
 @Component({
   selector: 'app-create-ticket',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './create-ticket.component.html',
   styleUrls: ['./create-ticket.component.css']
 })
-export class CreateTicketComponent {
-  ticketForm: FormGroup;
+export class CreateTicketComponent implements OnInit {
+  // Form Data Model
+  ticket = {
+    title: '',
+    description: '',
+    priority: '',        
+    ticket_type: '',     
+    request_type: '',   
+    affected_end_user: ''
+  };
+  
+  selectedFile: File | null = null;
+  
+  // Dropdown Data Sources
+  ticketTypes: TicketType[] = [];
+  requestTypes: RequestType[] = [];
+  priorities: PriorityOption[] = [];
+  
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
-  selectedFile: File | null = null; // Store the file here
 
   constructor(
-    private fb: FormBuilder,
     private ticketService: TicketService,
-    private router: Router
-  ) {
-    this.ticketForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(5)]],
-      description: ['', [Validators.required, Validators.minLength(10)]]
+    private router: Router,
+    private modalService: ModalService,
+    private cd: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.loadMetadata();
+  }
+
+  loadMetadata() {
+    // 1. Load Categories
+    this.ticketService.getTicketTypes().subscribe({
+      next: (data) => this.ticketTypes = data,
+      error: (err) => console.error('Failed to load types', err)
+    });
+
+    // 2. Load Priorities
+    this.ticketService.getPriorities().subscribe({
+      next: (data) => this.priorities = data,
+      error: (err) => console.error('Failed to load priorities', err)
     });
   }
 
-  // 1. Capture the file when user selects it
+  // Triggered when User selects a Category (Ticket Type)
+  onTypeChange() {
+    // Reset the sub-category selection
+    this.ticket.request_type = ''; 
+    this.requestTypes = []; 
+
+    if (this.ticket.ticket_type) {
+      const typeId = Number(this.ticket.ticket_type);
+      
+      // Fetch dependent Request Types (Cascading Logic)
+      this.ticketService.getRequestTypes(typeId).subscribe(data => {
+        this.requestTypes = data;
+        this.cd.detectChanges(); // Force UI update
+      });
+    }
+  }
+
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
-      this.selectedFile = file;
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFile = event.target.files[0];
     }
   }
 
   onSubmit() {
-    if (this.ticketForm.invalid) return;
+    // Basic Validation
+    if (!this.ticket.title || !this.ticket.ticket_type || !this.ticket.priority) {
+      this.modalService.open({ 
+        title: 'Missing Information', 
+        message: 'Please fill in the Title, Priority, and Category fields.', 
+        type: 'error' 
+      });
+      return;
+    }
 
     this.isSubmitting = true;
-    this.errorMessage = '';
-    this.successMessage = '';
 
-    // 2. Prepare FormData (Required for file uploads)
+    // Build FormData (Required for File Uploads + Data)
     const formData = new FormData();
-    formData.append('title', this.ticketForm.get('title')?.value);
-    formData.append('description', this.ticketForm.get('description')?.value);
+    formData.append('title', this.ticket.title);
+    formData.append('description', this.ticket.description);
+    formData.append('priority', this.ticket.priority);
+    formData.append('ticket_type', this.ticket.ticket_type); // Sends ID
+    
+    if (this.ticket.request_type) {
+      formData.append('request_type', this.ticket.request_type); // Sends ID
+    }
+    
+    if (this.ticket.affected_end_user) {
+      formData.append('affected_end_user', this.ticket.affected_end_user);
+    }
     
     if (this.selectedFile) {
       formData.append('attachment', this.selectedFile);
     }
 
-    // 3. Send to Service
+    // Call API
     this.ticketService.createTicket(formData).subscribe({
       next: () => {
-        this.successMessage = 'Ticket created successfully!';
-        this.isSubmitting = false;
-        setTimeout(() => this.router.navigate(['/department/my-tickets']), 1500);
+        this.modalService.open({
+          title: 'Success', 
+          message: 'Your ticket has been submitted successfully!', 
+          type: 'success'
+        }, () => {
+          this.router.navigate(['/department/home']);
+        });
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = 'Failed to create ticket. Please try again.';
         this.isSubmitting = false;
+        this.modalService.open({ 
+          title: 'Error', 
+          message: 'Failed to create ticket. Please try again.', 
+          type: 'error' 
+        });
       }
     });
   }

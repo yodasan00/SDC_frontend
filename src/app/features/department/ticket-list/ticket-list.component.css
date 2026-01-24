@@ -118,6 +118,11 @@
   color: #0c5460; 
   border: 1px solid #bee5eb;
 }
+.status-closed { 
+  background-color: #e2e3e5; 
+  color: #383d41; 
+  border: 1px solid #d6d8db;
+}
 
 /* Action Button */
 .btn-view {

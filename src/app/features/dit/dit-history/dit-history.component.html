@@ -2,7 +2,7 @@
   
   <div class="header">
     <h2>Approval History</h2>
-    <p>Records of all tickets processed by DIT.</p>
+    <p>Records of all tickets processed by Manager.</p>
   </div>
 
   @if (isLoading) {
@@ -17,7 +17,7 @@
             <th>ID</th>
             <th>Title</th>
             <th>Processed Date</th>
-            <th>Decision</th>
+            <th>Status</th>
             <th>Action</th> </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@
               <td>{{ ticket.created_at | date:'mediumDate' }}</td>
               <td>
                 <span class="status-badge" 
-                      [class.approved]="ticket.status === 'APPROVED' || ticket.status === 'IN_PROGRESS' || ticket.status === 'COMPLETED'"
+                      [class.approved]="ticket.status === 'APPROVED' || ticket.status === 'IN_PROGRESS' || ticket.status === 'COMPLETED' || ticket.status === 'CLOSED'"
                       [class.rejected]="ticket.status === 'REJECTED'">
                   {{ ticket.status }}
                 </span>

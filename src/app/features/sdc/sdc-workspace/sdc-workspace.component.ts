@@ -1,32 +1,43 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Import ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+
+// Services
 import { TicketService, Ticket } from '../../../core/services/ticket.service';
-import { ModalService } from '../../../core/services/modal.service'; // <--- Import
+import { ModalService } from '../../../core/services/modal.service';
+
+// Directive
+import { SlaStatusDirective } from '../../../shared/directives/sla-status.directive';
 
 @Component({
   selector: 'app-sdc-workspace',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SlaStatusDirective],
   templateUrl: './sdc-workspace.component.html',
   styleUrls: ['./sdc-workspace.component.css']
 })
 export class SdcWorkspaceComponent implements OnInit {
   ticket: Ticket | null = null;
   isLoading = true;
-  isProcessing = false;
+  
+  // Progress Modal State
+  showProgressModal = false;
+  progressNote = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private ticketService: TicketService,
-    private cd: ChangeDetectorRef,
-    private modalService: ModalService // <--- Inject
+    private modalService: ModalService,
+    private cd: ChangeDetectorRef // <--- 2. Inject ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadTicket(id);
+    if (id) {
+      this.loadTicket(id);
+    }
   }
 
   loadTicket(id: number) {
@@ -35,123 +46,81 @@ export class SdcWorkspaceComponent implements OnInit {
       next: (t) => {
         this.ticket = t;
         this.isLoading = false;
-        this.cd.detectChanges();
+        this.cd.detectChanges(); // <--- 3. Update view with ticket data
       },
       error: () => {
-        // REPLACEMENT: Error Modal
-        this.modalService.open({
-          title: 'Not Found',
-          message: 'This ticket does not exist or you do not have permission to view it.',
-          type: 'error'
-        }, () => {
-           this.router.navigate(['/sdc/inbox']);
+        this.isLoading = false;
+        this.modalService.open({ title: 'Error', message: 'Ticket not found', type: 'error' }, () => {
+          this.router.navigate(['/sdc/inbox']);
         });
+        this.cd.detectChanges();
       }
     });
   }
 
+  // 1. Start Work
   startWork() {
-    // REPLACEMENT: Confirm Modal
     this.modalService.open({
       title: 'Start Work',
-      message: 'Are you ready to start working on this ticket?',
+      message: 'Are you ready to begin working on this ticket?',
       type: 'confirm',
-      confirmText: 'Start Now'
+      confirmText: 'Start Timer'
     }, () => {
-      
-      // LOGIC MOVED INSIDE CALLBACK
-      this.isProcessing = true;
-      this.cd.detectChanges();
-
-      this.ticketService.startTicket(this.ticket!.id).subscribe({
-        next: () => {
-          this.modalService.open({
-            title: 'Work Started',
-            message: 'Status updated to In Progress.',
-            type: 'success'
-          });
-          
-          // Reload to update status
-          this.loadTicket(this.ticket!.id);
-          this.isProcessing = false;
-          this.cd.detectChanges();
-        },
-        error: () => {
-          this.isProcessing = false;
-          this.cd.detectChanges();
-          this.modalService.open({ title: 'Error', message: 'Failed to start work.', type: 'error' });
-        }
+      this.ticketService.startTicket(this.ticket!.id).subscribe(() => {
+        this.loadTicket(this.ticket!.id); // Refresh to update status
       });
     });
   }
 
+  // 2. Open Log Modal
+  openProgressModal() {
+    this.progressNote = '';
+    this.showProgressModal = true;
+    this.cd.detectChanges(); // <--- Ensure modal opens immediately
+  }
+
+  // 3. Submit Log
+  submitProgress() {
+    if (!this.progressNote.trim()) return;
+
+    this.ticketService.logProgress(this.ticket!.id, this.progressNote).subscribe({
+      next: () => {
+        this.showProgressModal = false;
+        this.modalService.open({ title: 'Logged', message: 'Work progress saved to audit log.', type: 'success' });
+        this.cd.detectChanges(); // <--- Ensure modal closes immediately
+      },
+      error: () => {
+        this.modalService.open({ title: 'Error', message: 'Failed to save log.', type: 'error' });
+      }
+    });
+  }
+
+  // 4. Complete Ticket
   completeWork() {
-    // REPLACEMENT: Confirm Modal
     this.modalService.open({
       title: 'Complete Ticket',
-      message: 'Are you sure you want to mark this ticket as COMPLETED?',
+      message: 'Mark this ticket as resolved? This will notify the PM.',
       type: 'confirm',
-      confirmText: 'Mark Complete'
+      confirmText: 'Mark Completed'
     }, () => {
-      
-      // LOGIC MOVED INSIDE CALLBACK
-      this.isProcessing = true;
-      this.cd.detectChanges();
-
-      this.ticketService.completeTicket(this.ticket!.id).subscribe({
-        next: () => {
-          this.modalService.open({
-            title: 'Success!',
-            message: 'Ticket completed successfully.',
-            type: 'success'
-          }, () => {
-             this.router.navigate(['/sdc/pending']);
-          });
-        },
-        error: () => {
-          this.isProcessing = false;
-          this.cd.detectChanges();
-          this.modalService.open({ title: 'Error', message: 'Failed to complete ticket.', type: 'error' });
-        }
+      this.ticketService.completeTicket(this.ticket!.id).subscribe(() => {
+        this.router.navigate(['/sdc/history']);
       });
     });
   }
 
-  revertWork() {
-    // REPLACEMENT: Prompt Modal (Input Logic)
+  // 5. Revert Ticket
+  revertTicket() {
     this.modalService.open({
-      title: 'Revert to Manager',
-      message: 'Please explain why you are sending this ticket back (e.g., Wrong Domain):',
+      title: 'Revert Ticket',
+      message: 'Send back to PM? (Use only if assigned incorrectly)',
       type: 'confirm',
-      confirmText: 'Revert Ticket',
-      showInput: true // <--- Enables the Textarea
+      showInput: true,
+      confirmText: 'Revert'
     }, (reason) => {
-      
-      // Validation: Check if reason was entered
-      if (!reason) {
-        this.modalService.open({ title: 'Required', message: 'You must provide a reason to revert.', type: 'error' });
-        return;
-      }
-
-      // LOGIC MOVED INSIDE CALLBACK
-      this.isProcessing = true;
-      this.cd.detectChanges();
-
-      this.ticketService.revertTicket(this.ticket!.id, reason).subscribe({
-        next: () => {
-          this.modalService.open({
-            title: 'Reverted',
-            message: 'Ticket has been sent back to the Project Manager.',
-            type: 'success'
-          }, () => {
-             this.router.navigate(['/sdc/pending']);
-          });
-        },
-        error: (err) => {
-          this.isProcessing = false;
-          this.cd.detectChanges();
-          this.modalService.open({ title: 'Error', message: 'Failed to revert ticket.', type: 'error' });
-        }
+      if (!reason) return;
+      this.ticketService.revertTicket(this.ticket!.id, reason).subscribe(() => {
+        this.router.navigate(['/sdc/inbox']);
       });
     });
   }

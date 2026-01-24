@@ -8,19 +8,22 @@
     <ul class="nav-links">
       <li>
         <a routerLink="/sdc/home" routerLinkActive="active">
-          <span class="icon">🏠</span> Overview
+          <span class="icon">🏠</span> 
+           <span class="link-text">Overview</span>
         </a>
       </li>
       
       <li>
         <a routerLink="/sdc/pending" routerLinkActive="active">
-          <span class="icon">📥</span> New Requests
+          <span class="icon">📥</span> 
+           <span class="link-text">New Requests</span>
         </a>
       </li>
 
       <li>
         <a routerLink="/sdc/active" routerLinkActive="active">
-          <span class="icon">⚡</span> Active Tasks
+          <span class="icon">⚡</span> 
+          <span class="link-text">Active Tasks</span>
         </a>
       </li>
 
@@ -32,11 +35,11 @@
       </li>
 
       <li class="mt-auto">
-        <a routerLink="/login">
-          <span class="icon">🚪</span>
-          <span class="link-text">Logout</span>
-        </a>
-      </li>
+      <a (click)="onLogout()" style="cursor: pointer;"> 
+        <span class="icon">🚪</span>
+        <span class="link-text">Logout</span>
+      </a>
+    </li>
 
       </ul>
   </nav>

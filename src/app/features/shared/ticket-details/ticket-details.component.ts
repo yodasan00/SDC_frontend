@@ -1,12 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1. Import ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms'; 
+
 import { 
   TicketService, 
   Ticket, 
   TicketComment, 
-  AuditLog 
+  AuditLog,
+  DomainOption // <--- 1. Import DomainOption
 } from '../../../core/services/ticket.service';
 import { AuthService } from '../../../auth/auth.service';
 
@@ -21,8 +23,11 @@ export class TicketDetailsComponent implements OnInit {
   ticket: Ticket | null = null;
   comments: TicketComment[] = [];
   logs: AuditLog[] = [];
-  currentUserRole: string = '';
   
+  // 2. Add Domains List
+  domains: DomainOption[] = [];
+  
+  currentUserRole: string = '';
   newCommentText: string = '';
   activeTab: string = 'comments';
   isLoading: boolean = true;
@@ -38,6 +43,10 @@ export class TicketDetailsComponent implements OnInit {
     this.currentUserRole = this.authService.getRole();
     this.activeTab = 'logs'; 
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    
+    // 3. Load Metadata (Domains) on Init
+    this.loadMetadata();
+
     if (id) {
       this.loadData(id);
     } else {
@@ -45,15 +54,29 @@ export class TicketDetailsComponent implements OnInit {
     }
   }
 
+  // 4. Fetch Domain List
+  loadMetadata() {
+    this.ticketService.getDomains().subscribe(data => {
+      this.domains = data;
+      this.cd.detectChanges();
+    });
+  }
+
+  // 5. Helper Function for HTML to translate ID -> Name
+  getDomainName(id: number): string {
+    const match = this.domains.find(d => d.id === id);
+    return match ? match.display : 'Unknown Domain';
+  }
+
   loadData(id: number): void {
     this.isLoading = true;
+    
+    // 1. Fetch Ticket
     this.ticketService.getTicketById(id).subscribe({
       next: (data) => {
         this.ticket = data;
-        console.log('Ticket loaded:', data);
-        
         this.isLoading = false; 
-        this.cd.detectChanges(); // Force screen update
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching ticket:', err);
@@ -62,20 +85,20 @@ export class TicketDetailsComponent implements OnInit {
       }
     });
 
-    // 2. Fetch Comments (Background)
+    // 2. Fetch Comments
     this.ticketService.getComments(id).subscribe({
       next: (data) => {
         this.comments = data;
-        this.cd.detectChanges(); // Update when comments arrive
+        this.cd.detectChanges();
       },
       error: (err) => console.error('Error fetching comments:', err)
     });
 
-
+    // 3. Fetch Audit Logs
     this.ticketService.getAuditLogs(id).subscribe({
       next: (data) => {
         this.logs = data;
-        this.cd.detectChanges(); // Update when logs arrive
+        this.cd.detectChanges();
       },
       error: (err) => console.error('Error fetching logs:', err)
     });
@@ -88,7 +111,7 @@ export class TicketDetailsComponent implements OnInit {
       next: (newComment) => {
         this.comments.push(newComment);
         this.newCommentText = '';
-        this.cd.detectChanges(); // Update list instantly
+        this.cd.detectChanges();
       },
       error: (err) => alert('Could not post comment.')
     });

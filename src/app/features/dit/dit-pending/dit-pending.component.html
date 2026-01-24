@@ -17,9 +17,8 @@
         <thead>
           <tr>
             <th style="width: 80px;">ID</th>
-            <th style="width: 40%;">Issue Details</th>
-            <th>Requester</th>
-            <th style="text-align: right;">Action</th>
+            <th style="width: 35%;">Issue Details</th>
+            <th>User</th> <th>Priority</th>   <th style="text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +30,7 @@
               
               <td>
                 <div class="ticket-title">{{ ticket.title }}</div>
-                <div class="ticket-desc">{{ ticket.description | slice:0:70 }}...</div>
+                <div class="ticket-desc">{{ ticket.description | slice:0:60 }}{{ ticket.description.length > 60 ? '...' : '' }}</div>
                 <div class="ticket-date">
                   📅 {{ ticket.created_at | date:'mediumDate' }}
                 </div>
@@ -39,21 +38,26 @@
               
               <td>
                 <div class="user-info">
-                  <span class="user-icon">👤</span>
-                  {{ ticket.created_by_name || 'User ' + ticket.created_by }}
+                  <span class="user-icon"></span> <span class="dept-name">{{ ticket.created_by_name || 'Unknown Dept' }}</span>
                 </div>
+              </td>
+
+              <td>
+                <span class="priority-badge" [class]="ticket.priority">
+                  {{ ticket.priority }}
+                </span>
               </td>
               
               <td style="text-align: right;">
                 <a [routerLink]="['/dit/approve', ticket.id]" class="btn-review">
-                  <span>Review Ticket</span>
+                  <span>Review</span>
                   <span class="arrow">→</span>
                 </a>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-state">
+              <td colspan="5" class="empty-state">
                 🎉 No pending tickets! You are all caught up.
               </td>
             </tr>

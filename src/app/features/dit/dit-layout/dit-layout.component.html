@@ -2,7 +2,7 @@
   
   <nav class="sidebar">
     <div class="sidebar-header">
-      <h2>DIT Admin</h2>
+      <h2>Project Manager</h2>
     </div>
 
     <ul class="nav-links">
@@ -21,14 +21,21 @@
       </li>
       
       <li>
+        <a routerLink="/dit/completed-tickets" routerLinkActive="active">
+          <span class="icon">✅</span>
+          <span class="link-text">Completed Tickets</span>
+        </a>
+      </li>
+      
+      <li>
         <a routerLink="/dit/history" routerLinkActive="active">
           <span class="icon">📜</span>
-          <span class="link-text">Approval History</span>
+          <span class="link-text">History</span>
         </a>
       </li>
       
       <li class="mt-auto">
-        <a routerLink="/login">
+        <a (click)="onLogout()" style="cursor: pointer;"> 
           <span class="icon">🚪</span>
           <span class="link-text">Logout</span>
         </a>
@@ -39,7 +46,7 @@
   <main class="main-container">
     
     <app-header 
-      [title]="'DIT Dashboard'" 
+      [title]="'Project Manager Dashboard'" 
       (toggleSidebar)="toggleSidebar()">
     </app-header>
 

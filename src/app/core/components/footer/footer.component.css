@@ -1,0 +1,32 @@
+.app-footer {
+  padding: 1.5rem 2rem;
+  margin-top: auto; /* Pushes to bottom if flex container used */
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc; /* Very light slate bg */
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 0.8rem;
+  color: #94a3b8; /* Muted Text */
+}
+
+.version {
+  font-family: monospace;
+  background: #e2e8f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #64748b;
+}
+
+@media (max-width: 600px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

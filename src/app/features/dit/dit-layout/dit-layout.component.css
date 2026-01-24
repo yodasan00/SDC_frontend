@@ -1,101 +1,187 @@
+/* =========================
+   1. VARIABLES & LAYOUT
+   ========================= */
+:host {
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 70px;
+  --header-height: 64px;
+  --primary-color: #3b82f6;      /* Bright Blue */
+  --sidebar-bg: #0f172a;         /* Dark Slate */
+  --sidebar-hover: #1e293b;      /* Lighter Slate */
+  --text-sidebar: #94a3b8;       /* Muted Text */
+  --text-sidebar-active: #ffffff;
+  --bg-main: #f1f5f9;            /* Light Gray Background */
+}
+
 .layout-wrapper {
   display: flex;
   height: 100vh;
-  width: 100%;
   overflow: hidden;
-  position: relative; /* Needed for absolute positioning if desired */
+  background-color: var(--bg-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* --- SIDEBAR STYLING --- */
+/* =========================
+   2. SIDEBAR STYLING
+   ========================= */
 .sidebar {
-  width: 250px;           /* Default Width */
-  background-color: #2c3e50;
-  color: white;
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  color: var(--text-sidebar);
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
-  
-  /* The Animation Magic */
-  transition: all 0.3s ease-in-out;
-  overflow: hidden;       /* Hides text when width is 0 */
-  white-space: nowrap;    /* Prevents text wrapping during animation */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
+/* Header (Logo Area) */
 .sidebar-header {
-  height: 60px; /* Match header height */
+  height: var(--header-height);
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: #1a252f;
-  border-bottom: 1px solid #34495e;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
   margin: 0;
-  font-size: 1.2rem;
+  white-space: nowrap;
   opacity: 1;
   transition: opacity 0.2s;
+  letter-spacing: -0.5px;
 }
 
-/* --- COLLAPSED STATE --- */
-/* When the wrapper has 'sidebar-collapsed', shrink the sidebar */
-.layout-wrapper.sidebar-collapsed .sidebar {
-  width: 0px; /* Completely hide it */
-  /* If you want a "Mini Icon" sidebar instead, change 0px to 60px */
-}
-
-.layout-wrapper.sidebar-collapsed .sidebar-header h2 {
-  opacity: 0; /* Hide title smoothly */
-}
-
-/* --- LINKS STYLING --- */
+/* Navigation Links */
 .nav-links {
   list-style: none;
-  padding: 0;
+  padding: 1rem 0.75rem;
   margin: 0;
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
 }
 
 .nav-links li a {
   display: flex;
   align-items: center;
-  padding: 15px 20px;
-  color: #ecf0f1;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
   text-decoration: none;
-  transition: background 0.3s;
-  border-left: 4px solid transparent;
-  height: 50px;
+  color: var(--text-sidebar);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
+/* Hover State */
 .nav-links li a:hover {
-  background-color: #34495e;
+  background-color: var(--sidebar-hover);
+  color: #e2e8f0;
+  transform: translateX(4px);
 }
 
+/* Active State */
 .nav-links li a.active {
-  background-color: #34495e;
-  border-left-color: #3498db;
+  background-color: var(--primary-color);
+  color: var(--text-sidebar-active);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); /* Blue Glow */
+}
+
+.nav-links li a.active .icon {
+  transform: scale(1.1);
 }
 
 .icon {
-  margin-right: 15px;
   font-size: 1.2rem;
-  min-width: 24px; /* Ensures icon stays centered if we do mini-sidebar */
+  min-width: 24px;
+  text-align: center;
+  transition: transform 0.2s;
 }
 
-/* --- MAIN CONTAINER --- */
+/* Bottom Links (Logout) */
+.mt-auto {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 1rem;
+}
+
+/* =========================
+   3. MAIN CONTENT AREA
+   ========================= */
 .main-container {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f4f7f6;
-  transition: all 0.3s ease-in-out;
+  overflow: hidden; /* Scroll happens inside content-wrapper */
+  position: relative;
 }
 
 .content-wrapper {
   flex-grow: 1;
-  overflow-y: auto;
-  padding: 20px;
+  padding: 2rem;
+  overflow-y: auto; /* Scrollable content */
+  scroll-behavior: smooth;
+}
+
+/* =========================
+   4. COLLAPSED STATE LOGIC
+   ========================= */
+.layout-wrapper.sidebar-collapsed .sidebar {
+  width: var(--sidebar-collapsed-width);
+}
+
+.layout-wrapper.sidebar-collapsed .sidebar-header {
+  justify-content: center;
+  padding: 0;
+}
+
+.layout-wrapper.sidebar-collapsed .sidebar-header h2 {
+  opacity: 0;
+  width: 0;
+  display: none;
+}
+
+.layout-wrapper.sidebar-collapsed .nav-links li a {
+  justify-content: center;
+  padding: 12px;
+}
+
+.layout-wrapper.sidebar-collapsed .link-text {
+  display: none;
+  opacity: 0;
+}
+
+.layout-wrapper.sidebar-collapsed .nav-links li a:hover {
+  transform: none; /* No shifting in collapsed mode */
+  background-color: var(--sidebar-hover);
+}
+
+/* =========================
+   5. RESPONSIVE (MOBILE)
+   ========================= */
+@media (max-width: 768px) {
+  .layout-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    position: fixed;
+    height: 100%;
+    transform: translateX(-100%); /* Hidden by default */
+  }
+
+  .layout-wrapper.sidebar-collapsed .sidebar {
+    transform: translateX(0); /* Show when toggled on mobile */
+    width: var(--sidebar-width); /* Full width on mobile when open */
+  }
 }

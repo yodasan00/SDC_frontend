@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { HeaderComponent } from '../../../core/components/header/header.component';
 import { FooterComponent } from '../../../core/components/footer/footer.component';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-department-layout',
@@ -14,8 +15,13 @@ import { FooterComponent } from '../../../core/components/footer/footer.componen
 export class DepartmentLayoutComponent {
   // Set to 'false' if you want it hidden by default
   isSidebarOpen = false; 
+  constructor(private authService: AuthService) {}
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 }

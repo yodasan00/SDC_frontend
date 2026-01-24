@@ -22,6 +22,8 @@ import { OfficerLayoutComponent } from './features/officer/officer-layout/office
 import { OfficerDashboardComponent } from './features/officer/officer-dashboard/officer-dashboard.component';
 import { OfficerSearchComponent } from './features/officer/officer-search/officer-search.component';
 import { RegisterComponent } from './auth/register/register.component';
+import { DitClosureWorkspaceComponent } from './features/dit/dit-closure-workspace/dit-closure-workspace.component';
+import { DitCompletedTicketsComponent } from './features/dit/dit-completed-tickets/dit-completed-tickets.component';
 
 
 export const routes: Routes = [
@@ -56,6 +58,8 @@ export const routes: Routes = [
       { path: 'ticket/:id', component: TicketDetailsComponent },
       { path: 'approve/:id', component: DitApprovalComponent },
       { path: 'history', component: DitHistoryComponent },
+      { path: 'completed-tickets', component: DitCompletedTicketsComponent },
+      { path: 'closure/:id', component: DitClosureWorkspaceComponent },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
     , canActivate: [authGuard]

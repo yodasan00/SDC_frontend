@@ -31,7 +31,7 @@
         </div>
         <div class="meta-item">
           <span class="label">🏢 Domain:</span>
-          <span class="value">{{ ticket.domain !== 'NONE' ? ticket.domain : 'Unassigned' }}</span>
+          <span class="value">{{ ticket.domain ? getDomainName(ticket.domain) : 'Pending Assignment' }}</span>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
               class="tab-btn" 
               [class.active]="activeTab === 'logs'" 
               (click)="activeTab = 'logs'">
-              📜 Audit Logs
+              📜 Progress timestamp
             </button>
             
             @if (currentUserRole !== 'DEPARTMENT') {
@@ -160,4 +160,3 @@
 
     </div>
   }
-</div>

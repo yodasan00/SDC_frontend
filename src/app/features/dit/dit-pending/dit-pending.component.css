@@ -139,3 +139,21 @@
   font-size: 1.1rem;
   background-color: #fff;
 }
+
+/* Priority Badges */
+.priority-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  min-width: 40px;
+}
+
+/* Color Coding */
+.priority-badge.P1 { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; } /* Red */
+.priority-badge.P2 { background-color: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; } /* Orange */
+.priority-badge.P3 { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; } /* Yellow */
+.priority-badge.P4 { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; } /* Grey */

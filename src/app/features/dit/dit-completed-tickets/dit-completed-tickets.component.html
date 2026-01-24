@@ -1,0 +1,59 @@
+<div class="list-container">
+  <div class="header">
+    <div class="title-section">
+      <h2>Work Verification Queue</h2>
+      <p>Review and close tickets marked as completed by the SDC teams.</p>
+    </div>
+    <div class="stats-badge">
+      <strong>{{ tickets.length }}</strong> Tickets Waiting
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="loading-state">Loading verification queue...</div>
+  } @else if (tickets.length === 0) {
+    <div class="empty-state">
+      <div class="icon">🎉</div>
+      <h3>All Caught Up!</h3>
+      <p>No completed tickets pending verification.</p>
+      <a routerLink="/dit/dashboard" class="btn-back">Return to Dashboard</a>
+    </div>
+  } @else {
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Subject</th>
+            <th>Technical Team</th>
+            <th>Completed On</th>
+            <th>Priority</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ticket of tickets; track ticket.id) {
+            <tr>
+              <td class="id-col">#{{ ticket.id }}</td>
+              <td>
+                <div class="ticket-title">{{ ticket.title }}</div>
+                <div class="ticket-user">By: {{ ticket.created_by_name }}</div>
+              </td>
+              <td>
+                <span class="domain-badge">{{ ticket.domain_value || 'Assigned' }}</span>
+              </td>
+              <td>{{ ticket.created_at | date:'mediumDate' }}</td> <td>
+                <span class="priority-badge" [class]="ticket.priority">{{ ticket.priority }}</span>
+              </td>
+              <td class="text-right">
+                <a [routerLink]="['/dit/closure', ticket.id]" class="btn-review">
+                  Review & Close →
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

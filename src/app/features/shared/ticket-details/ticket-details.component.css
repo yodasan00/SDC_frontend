@@ -40,9 +40,37 @@ h2 { margin: 0; color: #2c3e50; font-size: 1.5rem; }
 .status-badge.in_progress { background: #fff8e1; color: #f39c12; border: 1px solid #ffe0b2; }
 .status-badge.completed { background: #d4edda; color: #155724; }
 .status-badge.rejected { background: #ffebee; color: #c62828; }
+.status-badge.closed { background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; }
 
-.meta-row { display: flex; gap: 2rem; color: #555; font-size: 0.95rem; }
-.meta-item .label { font-weight: 600; color: #7f8c8d; margin-right: 5px; }
+/* --- META ROW FIX STARTS HERE --- */
+.meta-row { 
+  display: flex; 
+  gap: 2rem; 
+  color: #555; 
+  font-size: 0.95rem;
+  flex-wrap: wrap; /* Ensures responsiveness on small screens */
+  align-items: center; 
+}
+
+/* 👇 This is the key fix: Forces Label and Div Value to sit side-by-side */
+.meta-item {
+  display: flex; 
+  align-items: center;
+}
+
+.meta-item .label { 
+  font-weight: 600; 
+  color: #7f8c8d; 
+  margin-right: 8px; /* Added slightly more space */
+  white-space: nowrap;
+}
+
+.meta-item .value {
+  /* Ensures the value text doesn't force a break */
+  display: inline-block;
+}
+/* --- META ROW FIX ENDS HERE --- */
+
 
 /* --- Grid Layout --- */
 .content-grid {

@@ -1,148 +1,263 @@
+/* =========================
+   1. VARIABLES & CONTAINER
+   ========================= */
+:host {
+  --primary-color: #2563eb;       /* Brand Blue */
+  --primary-hover: #1d4ed8;       /* Darker Blue */
+  --text-main: #1e293b;           /* Slate 800 */
+  --text-secondary: #64748b;      /* Slate 500 */
+  --border-color: #cbd5e1;        /* Slate 300 */
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --danger-color: #ef4444;
+  --focus-ring: rgba(37, 99, 235, 0.2);
+}
+
 .create-container {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  background-color: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 
+              0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  border: 1px solid #f1f5f9;
 }
 
-.form-card {
-  background: white;
-  width: 100%;
-  max-width: 600px;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  border: 1px solid #e0e0e0;
+/* =========================
+   2. HEADER
+   ========================= */
+.header {
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 1.5rem;
 }
 
-.card-header h2 {
-  margin-top: 0;
-  color: #2c3e50;
+.header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.025em;
 }
 
-.card-header p {
-  color: #7f8c8d;
-  margin-bottom: 2rem;
+.header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
 }
 
-/* Form Elements */
+/* =========================
+   3. FORM LAYOUT
+   ========================= */
 .form-group {
   margin-bottom: 1.5rem;
 }
 
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #34495e;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #bdc3c7;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.2s;
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-}
-
-/* Validation Styling */
-input.invalid, textarea.invalid {
-  border-color: #e74c3c;
-}
-
-.error-text {
-  color: #e74c3c;
-  font-size: 0.85rem;
-  margin-top: 5px;
-  display: block;
-}
-
-/* Alerts */
-.alert {
-  padding: 1rem;
-  border-radius: 4px;
+/* Row for side-by-side inputs */
+.form-row {
+  display: flex;
+  gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-.alert-success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.alert-error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-/* Buttons */
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn-submit {
-  flex: 2;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-}
-
-.btn-submit:hover:not(:disabled) {
-  background-color: #2980b9;
-}
-
-.btn-submit:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
-
-.btn-cancel {
+.form-group.half {
   flex: 1;
-  background-color: transparent;
-  color: #7f8c8d;
-  border: 1px solid #bdc3c7;
-  padding: 12px;
-  border-radius: 4px;
-  cursor: pointer;
+  min-width: 0; /* Prevents overflow in flex items */
+  margin-bottom: 0; /* Let row handle spacing */
+}
+
+/* =========================
+   4. INPUTS & LABELS
+   ========================= */
+label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.req {
+  color: var(--danger-color);
+  margin-left: 2px;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-main);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+  box-sizing: border-box; /* Important for width: 100% */
+}
+
+/* Placeholder Styling */
+::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+/* Interactive States */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #94a3b8;
+}
+
+/* Disabled State */
+select:disabled,
+input:disabled {
+  background-color: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+/* Helper Text */
+.hint {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Textarea specific */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* =========================
+   5. FILE UPLOAD
+   ========================= */
+.file-upload-wrapper {
+  background-color: #f8fafc;
+  border: 2px dashed var(--border-color);
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
   transition: all 0.2s;
 }
 
-.btn-cancel:hover {
-  background-color: #f0f0f0;
-  color: #2c3e50;
-}
-.file-upload-wrapper {
-  margin-top: 5px;
+.file-upload-wrapper:hover {
+  border-color: var(--primary-color);
+  background-color: #eff6ff;
 }
 
-.file-upload-wrapper input[type="file"] {
+input[type="file"] {
   display: block;
   width: 100%;
-  padding: 8px;
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  padding: 0;
 }
 
-.hint-text {
+/* Customizing the native file button (Chrome/Edge/Safari) */
+input[type="file"]::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #f1f5f9;
+}
+
+.file-upload-wrapper small {
   display: block;
-  margin-top: 5px;
-  color: #95a5a6;
-  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* =========================
+   6. ACTIONS
+   ========================= */
+.form-actions {
+  margin-top: 2.5rem;
+  display: flex;
+  justify-content: flex-end; /* Right align button */
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(37, 99, 235, 0.5);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* =========================
+   7. RESPONSIVE DESIGN
+   ========================= */
+@media (max-width: 768px) {
+  .create-container {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0; /* Let form-group margin handle it */
+  }
+
+  .form-group.half {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-submit {
+    width: 100%;
+  }
 }

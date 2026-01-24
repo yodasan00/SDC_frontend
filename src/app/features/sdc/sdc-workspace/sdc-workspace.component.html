@@ -1,117 +1,113 @@
-<div class="workspace-container">
+<div class="workspace-container" [appSlaStatus]="ticket">
   
   <div class="header">
-    <div class="header-left">
-      <a routerLink="/sdc/pending" class="back-link">← Back to Inbox</a>
-      <h2>Technical Workspace <span class="ticket-id">#{{ ticket?.id }}</span></h2>
-    </div>
-    
-    <div class="header-right">
-      @if (ticket) {
-        <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-logs">
-          📜 View Full Logs
-        </a>
-      }
-    </div>
+  <div class="header-left">
+    <a routerLink="/sdc/inbox" class="back-link">← Back to Inbox</a>
+    <h2>Workspace #{{ ticket?.id }}</h2>
   </div>
+
+  <div class="header-right">
+    @if (ticket) {
+      <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-view-logs">
+        📜 View Audit Logs
+      </a>
+    }
+  </div>
+</div>
 
   @if (ticket) {
     <div class="content-grid">
       
       <div class="details-card">
-        
-        <div class="status-banner" [class]="ticket.status.toLowerCase()">
-          <span class="status-icon">
-            @if(ticket.status === 'APPROVED') { ⏳ }
-            @if(ticket.status === 'IN_PROGRESS') { ⚡ }
-            @if(ticket.status === 'COMPLETED') { ✅ }
-          </span>
-          <span class="status-text">{{ ticket.status.replace('_', ' ') }}</span>
+        <div class="card-header">
+          <h3>Issue Details</h3>
+          <span class="status-badge" [class]="ticket.status.toLowerCase()">{{ ticket.status }}</span>
         </div>
-
+        
         <div class="card-body">
-          <h1 class="ticket-title">{{ ticket.title }}</h1>
-          
-          <div class="meta-data">
-            <span class="meta-item">👤 <strong>Requester:</strong> {{ ticket.created_by_name }}</span>
-            <span class="meta-item">📅 <strong>Date:</strong> {{ ticket.created_at | date:'mediumDate' }}</span>
-            <span class="meta-item">🏷️ <strong>Domain:</strong> {{ ticket.domain }}</span>
+          <div class="detail-row">
+            <label>Title:</label>
+            <span>{{ ticket.title }}</span>
           </div>
-
-          <div class="description-box">
-            <label>Description</label>
+          <div class="detail-row">
+            <label>Priority:</label>
+            <span>{{ ticket.priority }}</span>
+          </div>
+          <div class="detail-row">
+            <label>End User:</label>
+            <span>{{ ticket.affected_end_user || 'N/A' }}</span>
+          </div>
+          <hr>
+          <div class="desc-box">
+            <label>Description:</label>
             <p>{{ ticket.description }}</p>
           </div>
 
-          @if (ticket.pm_remarks) {
-            <div class="pm-remarks">
-              <label>📝 Note from Project Manager:</label>
-              <p>"{{ ticket.pm_remarks }}"</p>
-            </div>
-          }
-
           @if (ticket.attachment) {
-            <div class="attachment-section">
-              <label>Attachment</label>
-              <div class="file-box">
-                <span class="file-icon">📎</span>
-                <span class="filename">Attached Document</span>
-                <a [href]="ticket.attachment" target="_blank" class="btn-download">
-                  👁️ View File
-                </a>
-              </div>
-            </div>
+            <a [href]="ticket.attachment" target="_blank" class="btn-file">📄 View Attachment</a>
           }
         </div>
       </div>
 
       <div class="action-card">
         <div class="card-header">
-          <h3>⚡ Action Console</h3>
+          <h3>⚡ Actions</h3>
         </div>
         
         <div class="card-body">
           
           @if (ticket.status === 'APPROVED') {
-            <div class="action-group">
-              <p class="action-hint">This ticket is assigned to your domain. You can start working now.</p>
-              
-              <button class="btn-action start" (click)="startWork()" [disabled]="isProcessing">
-                Start Work
-              </button>
-
-              <div class="divider"><span>OR</span></div>
-
-              <button class="btn-action revert" (click)="revertWork()" [disabled]="isProcessing">
-                ↩ Wrong Domain? Revert to PM
-              </button>
+            <div class="state-box">
+              <p>Ticket is assigned to your team.</p>
+              <button class="btn-start" (click)="startWork()">▶ Start Work</button>
+              <button class="btn-revert" (click)="revertTicket()">↩ Wrong Domain? Revert</button>
             </div>
           }
 
           @if (ticket.status === 'IN_PROGRESS') {
-            <div class="action-group">
-              <div class="active-indicator">
-                <span class="pulse"></span> Work In Progress
-              </div>
-              <p class="action-hint">Mark this ticket as complete when you are finished.</p>
+            <div class="state-box active">
+              <p>Work in progress...</p>
               
-              <button class="btn-action complete" (click)="completeWork()" [disabled]="isProcessing">
-                ✅ Mark as Completed
+              <button class="btn-log" (click)="openProgressModal()">
+                📝 Log Progress Note
+              </button>
+
+              <button class="btn-complete" (click)="completeWork()">
+                ✅ Mark Completed
               </button>
             </div>
           }
 
           @if (ticket.status === 'COMPLETED') {
-            <div class="completed-state">
-              <div class="success-icon">🎉</div>
-              <h4>Work Done!</h4>
-              <p>This ticket has been closed.</p>
+            <div class="state-box done">
+              <p>✅ Work Finished. Waiting for PM Closure.</p>
             </div>
           }
-
         </div>
       </div>
 
     </div>
+  } @else {
+    <p>Loading...</p>
   }
 </div>
+
+@if (showProgressModal) {
+  <div class="modal-backdrop">
+    <div class="modal-content">
+      <h3>Update Progress</h3>
+      <p>Add a note to the Audit Log about what you are doing (e.g., "Waiting for spare parts").</p>
+      
+      <textarea 
+        [(ngModel)]="progressNote" 
+        rows="4" 
+        placeholder="Type your update here..."
+      ></textarea>
+      
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="showProgressModal = false">Cancel</button>
+        <button class="btn-confirm" (click)="submitProgress()">Save to Log</button>
+      </div>
+    </div>
+  </div>
+}

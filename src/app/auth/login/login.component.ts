@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Required for [(ngModel)]
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -12,51 +12,65 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  credentials = { username: '', password: '' };
+
+  credentials = {
+    identifier: '',
+    password: ''
+  };
+
   isLoading = false;
   errorMessage = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-onSubmit() {
-  this.isLoading = true;
-  this.errorMessage = '';
+  onSubmit() {
+    const identifier = this.credentials.identifier?.trim();
+    const password = this.credentials.password;
 
-  this.authService.login(this.credentials).subscribe({
-    next: (res) => {
-      this.isLoading = false;
-      
-  
-      console.log('Login Success! Full Response:', res);
-      console.log('Role received:', res.role); 
-
-      const role = res.role ? res.role.toLowerCase() : '';
-
-      switch(role) {
-        case 'department':
-          console.log('Navigating to Department Dashboard...'); 
-          this.router.navigate(['/department/home']);
-          break;
-        case 'dit':
-          this.router.navigate(['/dit/home']);
-          break;
-        case 'sdc':
-          this.router.navigate(['/sdc/home']);
-          break;
-        case 'officer':
-          this.router.navigate(['/officer/dashboard']);
-          break;
-        default:
-          console.error('Unknown Role:', role); 
-          this.errorMessage = `Login successful, but unknown role: ${role}`;
-      }
-    },
-    error: (err) => {
-      this.isLoading = false;
-      console.error('Login Failed', err);
-      this.errorMessage = 'Invalid credentials';
+    // ✅ HARD GUARD (prevents blank submission)
+    if (!identifier || !password) {
+      this.errorMessage = 'Please enter username / email / phone and password';
+      return;
     }
-  });
-}
 
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.authService.login({
+      identifier: identifier,
+      password: password
+    }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        console.log('Login Success!', res);
+
+        const role = res.role ? res.role.toLowerCase() : '';
+
+        switch (role) {
+          case 'department':
+            this.router.navigate(['/department/home']);
+            break;
+          case 'dit':
+            this.router.navigate(['/dit/home']);
+            break;
+          case 'sdc':
+            this.router.navigate(['/sdc/home']);
+            break;
+          case 'officer':
+            this.router.navigate(['/officer/dashboard']);
+            break;
+          default:
+            this.errorMessage = 'Login successful, but role not recognized';
+        }
+      },
+      error: () => {
+        this.isLoading = false;
+        this.errorMessage = 'Invalid username / email / phone or password';
+      }
+    });
+  }
 }

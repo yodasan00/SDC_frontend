@@ -8,21 +8,26 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
+
   private apiUrl = 'http://127.0.0.1:8000/api/auth/';
   private userSubject = new BehaviorSubject<any>(null);
 
+  user$ = this.userSubject.asObservable();
+
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object 
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.loadUserFromStorage();
   }
 
-  user$ = this.userSubject.asObservable();
-
-  login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}login/`, credentials).pipe(
+  
+  login(credentials: { identifier: string; password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}login/`, {
+      identifier: credentials.identifier,
+      password: credentials.password
+    }).pipe(
       tap(response => {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('access_token', response.access);
@@ -35,7 +40,7 @@ export class AuthService {
 
   getRole(): string {
     const user = this.userSubject.value;
-    return user?.role || ''; 
+    return user?.role || '';
   }
 
   logout() {

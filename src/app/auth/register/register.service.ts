@@ -9,8 +9,10 @@ export interface RegisterRequest {
   password: string;
   phone_number: string;
   role: string;
-  department_name?: string;
-  domain?: string;
+
+  // 🔑 MUST BE PK (number), NOT string
+  department_name?: number | null;
+  domain?: number | null;
 }
 
 @Injectable({
@@ -22,6 +24,7 @@ export class RegisterService {
 
   constructor(private http: HttpClient) {}
 
+  // ---------------- REGISTER ----------------
   register(data: RegisterRequest): Observable<any> {
     return this.http.post(this.baseUrl + 'register/', data).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -29,9 +32,12 @@ export class RegisterService {
 
         if (error.error?.message) {
           errorMessage = error.error.message;
-        } else if (error.error) {
+        } 
+        else if (error.error) {
+          // Django serializer errors (FK, validation, etc.)
           errorMessage = JSON.stringify(error.error);
-        } else if (error.status) {
+        } 
+        else if (error.status) {
           errorMessage = `Server Error: ${error.status}`;
         }
 
@@ -41,8 +47,8 @@ export class RegisterService {
   }
 
   // ---------------- GET DEPARTMENTS ----------------
-  getDepartments(): Observable<string[]> {
-    return this.http.get<string[]>(this.baseUrl + 'departments/');
+  getDepartments(): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl + 'departments/');
   }
 
   // ---------------- GET DOMAINS ----------------

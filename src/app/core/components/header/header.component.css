@@ -122,3 +122,18 @@
   border: 2px solid #ffffff;
   box-shadow: 0 0 0 1px #e2e8f0;
 }
+
+
+
+.avatar-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.avatar-fallback {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+

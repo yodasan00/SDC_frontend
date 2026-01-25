@@ -28,15 +28,16 @@ export class RegisterComponent {
     { value: 'OFFICER', display: 'Officer' }
   ];
 
-  // Fetched from backend
-  departments: string[] = [];
-  domainChoices: { value: string, display: string }[] = [];
+  // 🔑 PK-based objects (FIXED TYPES)
+  departments: { value: number; display: string }[] = [];
+  domainChoices: { value: number; display: string }[] = [];
 
   constructor(
     private fb: FormBuilder,
     private registerService: RegisterService,
     private router: Router
   ) {
+
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -44,13 +45,13 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required],
-      department: [''],
-      domain_name: ['']
+      department: [null],
+      domain_name: [null]
     }, {
       validators: this.passwordMatchValidator
     });
 
-    // ROLE CHANGE HANDLER
+    // 🔁 ROLE CHANGE HANDLER
     this.registerForm.get('role')?.valueChanges.subscribe(role => {
 
       this.showDepartment = role === 'DEPARTMENT';
@@ -62,7 +63,7 @@ export class RegisterComponent {
         this.fetchDepartments();
       } else {
         this.registerForm.get('department')?.clearValidators();
-        this.registerForm.get('department')?.setValue('');
+        this.registerForm.get('department')?.setValue(null);
         this.departments = [];
       }
 
@@ -72,7 +73,7 @@ export class RegisterComponent {
         this.fetchDomains();
       } else {
         this.registerForm.get('domain_name')?.clearValidators();
-        this.registerForm.get('domain_name')?.setValue('');
+        this.registerForm.get('domain_name')?.setValue(null);
         this.domainChoices = [];
       }
 
@@ -84,8 +85,11 @@ export class RegisterComponent {
   // ---------------- FETCH DEPARTMENTS ----------------
   fetchDepartments() {
     this.registerService.getDepartments().subscribe({
-      next: (data: string[]) => {
-        this.departments = data;
+      next: (data: any[]) => {
+        this.departments = data.map(dep => ({
+          value: dep.id,        // ✅ PK (number)
+          display: dep.name     // ✅ shown to user
+        }));
       },
       error: () => {
         this.errorMessage = 'Failed to load departments';
@@ -96,14 +100,27 @@ export class RegisterComponent {
   // ---------------- FETCH DOMAINS ----------------
   fetchDomains() {
     this.registerService.getDomains().subscribe({
-      next: (data: any[]) => {
-        this.domainChoices = data;
+      next: (data: any) => {
+  
+        // ✅ Handle ALL Django response shapes
+        const domains = Array.isArray(data)
+          ? data
+          : data.results ?? [];
+  
+        this.domainChoices = domains.map((dom: any) => ({
+          value: dom.id,                          // PK
+          display: dom.display   // safe display
+        }));
+  
+        console.log('Domains loaded:', this.domainChoices); // debug
       },
-      error: () => {
+      error: (err) => {
+        console.error('Domain fetch error:', err);
         this.errorMessage = 'Failed to load domains';
       }
     });
   }
+  
 
   // ---------------- PASSWORD VALIDATOR ----------------
   passwordMatchValidator(form: FormGroup) {
@@ -122,33 +139,31 @@ export class RegisterComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // SEND ONLY BACKEND-EXPECTED FIELDS
     const formData: RegisterRequest = {
       username: this.registerForm.value.username,
       email: this.registerForm.value.email,
       phone_number: this.registerForm.value.phone_number,
       password: this.registerForm.value.password,
       role: this.registerForm.value.role,
-      department_name: this.registerForm.value.department || '',
-      domain: this.registerForm.value.domain_name || 'NONE'
+
+      // ✅ SEND PK VALUES (NOT STRING)
+      department_name: this.registerForm.value.department,
+      domain: this.registerForm.value.domain_name
     };
 
     this.registerService.register(formData).subscribe({
       next: () => {
         this.isLoading = false;
-      
-        // Show success message on same page
-        this.errorMessage = '';
         alert('Registration successful! You can register another user.');
-      
-        // Reset form
+
         this.registerForm.reset();
-      
-        // Hide conditional fields
         this.showDepartment = false;
         this.showDomain = false;
+      },
+      error: () => {
+        this.isLoading = false;
+        this.errorMessage = 'Registration failed';
       }
-      
     });
   }
 

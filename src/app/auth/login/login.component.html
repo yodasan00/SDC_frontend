@@ -6,26 +6,28 @@
     </div>
 
     <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-      
+
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="identifier">Username / Email / Phone</label>
         <input 
-          type="text" 
-          id="username" 
-          [(ngModel)]="credentials.username" 
-          name="username" 
+          type="text"
+          id="identifier"
+          [(ngModel)]="credentials.identifier"
+          name="identifier"
+          [ngModelOptions]="{ standalone: true }"
           required
-          placeholder="Enter ID"
+          placeholder="Enter username, email, or phone"
         >
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
         <input 
-          type="password" 
-          id="password" 
-          [(ngModel)]="credentials.password" 
-          name="password" 
+          type="password"
+          id="password"
+          [(ngModel)]="credentials.password"
+          name="password"
+          [ngModelOptions]="{ standalone: true }"
           required
           placeholder="••••••••"
         >
@@ -35,7 +37,7 @@
         {{ errorMessage }}
       </div>
 
-      <button type="submit" [disabled]="!loginForm.form.valid || isLoading">
+      <button type="submit" [disabled]="isLoading">
         <span *ngIf="!isLoading">Login</span>
         <span *ngIf="isLoading">Verifying...</span>
       </button>

@@ -74,9 +74,7 @@
           placeholder="••••••••"
         >
         <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="error">
-          <div *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">
-            Confirm Password is required.
-          </div>
+          Confirm Password is required.
         </div>
         <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="error">
           Passwords do not match.
@@ -97,37 +95,35 @@
         </div>
       </div>
 
-<!-- Department (DB Fetched) -->
-<div class="form-group" *ngIf="showDepartment">
-  <label for="department">Department</label>
-  <select formControlName="department" *ngIf="showDepartment">
-    <option [ngValue]="null">Select Department</option>
-    <option *ngFor="let dept of departments" [ngValue]="dept.value">
-      {{ dept.display }}
-    </option>
-  </select>
-  <div *ngIf="registerForm.get('department')?.invalid && registerForm.get('department')?.touched" class="error">
-    Department is required for Department User.
-  </div>
-</div>
+      <!-- Department -->
+      <div class="form-group" *ngIf="showDepartment">
+        <label>Department</label>
+        <select formControlName="department">
+          <option [ngValue]="null">Select Department</option>
+          <option *ngFor="let dept of departments" [ngValue]="dept.value">
+            {{ dept.display }}
+          </option>
+        </select>
+        <div *ngIf="registerForm.get('department')?.invalid && registerForm.get('department')?.touched" class="error">
+          Department is required.
+        </div>
+      </div>
 
+      <!-- Domain -->
+      <div class="form-group" *ngIf="showDomain">
+        <label>Domain</label>
+        <select formControlName="domain_name">
+          <option [ngValue]="null">Select Domain</option>
+          <option *ngFor="let domain of domainChoices" [ngValue]="domain.value">
+            {{ domain.display }}
+          </option>
+        </select>
+        <div *ngIf="registerForm.get('domain_name')?.invalid && registerForm.get('domain_name')?.touched" class="error">
+          Domain is required.
+        </div>
+      </div>
 
-<!-- Domain (DB Fetched) -->
-<div class="form-group" *ngIf="showDomain">
-  <label for="domain_name">Domain</label>
-  <select id="domain_name" formControlName="domain_name">
-    <option [ngValue]="null">Select Domain</option>
-    <option *ngFor="let domain of domainChoices" [ngValue]="domain.value">
-      {{ domain.display }}
-    </option>
-  </select>
-  <div *ngIf="registerForm.get('domain_name')?.invalid && registerForm.get('domain_name')?.touched" class="error">
-    Domain is required for SDC Staff.
-  </div>
-</div>
-
-
-      <!-- Error Message -->
+      <!-- Error -->
       <div *ngIf="errorMessage" class="alert error">
         {{ errorMessage }}
       </div>
@@ -140,4 +136,15 @@
 
     </form>
   </div>
+
+  <!-- SUCCESS MODAL -->
+  <div class="success-overlay" *ngIf="showSuccessModal">
+    <div class="success-card">
+      <div class="success-icon">✓</div>
+      <h2>Success</h2>
+      <p>Your registration has been completed successfully!</p>
+      <button class="success-btn" (click)="closeSuccess()">OK</button>
+    </div>
+  </div>
+
 </div>

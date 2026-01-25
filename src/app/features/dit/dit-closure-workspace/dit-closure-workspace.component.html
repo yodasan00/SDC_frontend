@@ -64,6 +64,21 @@
 
           <hr>
 
+          <div class="logs-review-section">
+            <label class="section-label">📋 Work Performed (Logs)</label>
+            
+            <div class="mini-logs-wrapper">
+              @for (log of workLogs; track log.id) {
+                <div class="mini-log-item">
+                  <span class="log-time">{{ log.timestamp | date:'shortTime' }}</span>
+                  <span class="log-text">{{ log.remarks }}</span>
+                </div>
+              } @empty {
+                <div class="no-logs">No specific work notes logged by the technical team.</div>
+              }
+            </div>
+          </div>
+
           <div class="form-group">
             <label>Closure Remarks (Optional)</label>
             <textarea [(ngModel)]="remarks" rows="3" placeholder="e.g. User confirmed issue resolved..."></textarea>

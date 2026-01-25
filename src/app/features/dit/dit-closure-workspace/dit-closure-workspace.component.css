@@ -169,3 +169,63 @@ textarea {
   cursor: pointer;
 }
 .btn-reopen:hover { border-color: #ef4444; color: #ef4444; background: #fef2f2; }
+
+/* Logs Section Wrapper */
+.logs-review-section {
+  margin-bottom: 1.5rem;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* The Box containing logs */
+.mini-logs-wrapper {
+  background: #f8fafc; /* Very light grey background */
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Individual Log Item */
+.mini-log-item {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+}
+
+.mini-log-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.log-time {
+  color: #64748b;
+  font-family: monospace;
+  font-size: 0.75rem;
+  min-width: 60px;
+  padding-top: 2px;
+}
+
+.log-text {
+  color: #334155;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.no-logs {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 8px;
+}

@@ -350,3 +350,108 @@ button:active {
 /* Animations */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* --- LAYOUT UPDATE --- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Left (Details+Logs) is wider, Right (Actions) is narrower */
+  gap: 2rem;
+}
+
+@media (max-width: 900px) {
+  .content-grid { grid-template-columns: 1fr; }
+}
+
+/* Wrapper for the logs */
+.mini-logs-wrapper {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0 15px 0; /* Space below "Work in progress" and above Buttons */
+  text-align: left;
+}
+
+.mini-logs-wrapper label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Scrollable area */
+.mini-logs-list {
+  max-height: 150px; /* Limits height so buttons are always visible */
+  overflow-y: auto;
+  font-size: 0.85rem;
+}
+
+/* Individual Log Row */
+.mini-log-item {
+  display: flex;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mini-log-item:last-child {
+  border-bottom: none;
+}
+
+.log-time {
+  color: #64748b;
+  font-family: monospace;
+  font-size: 0.8rem;
+  min-width: 60px;
+}
+
+.log-text {
+  color: #334155;
+  font-weight: 500;
+}
+
+.no-logs {
+  color: #cbd5e1;
+  font-style: italic;
+  font-size: 0.8rem;
+  text-align: center;
+}
+/* Ensure buttons have space */
+.btn-log { margin-bottom: 0; } /* Remove bottom margin if present */
+.btn-complete { margin-top: 0; }
+
+/* PM Instruction Box inside Action Card */
+.pm-instruction-box {
+  background-color: #fffbeb; /* Light Yellow */
+  border: 1px solid #fcd34d; /* Yellow Border */
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0 15px 0;
+  text-align: left;
+}
+
+.pm-instruction-box label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #b45309; /* Dark Amber */
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.pm-instruction-box p {
+  color: #78350f; /* Brownish Text */
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Ensure status message has space */
+.status-msg {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #64748b;
+}

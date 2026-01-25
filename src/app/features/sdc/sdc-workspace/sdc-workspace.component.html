@@ -1,19 +1,19 @@
 <div class="workspace-container" [appSlaStatus]="ticket">
   
   <div class="header">
-  <div class="header-left">
-    <a routerLink="/sdc/inbox" class="back-link">← Back to Inbox</a>
-    <h2>Workspace #{{ ticket?.id }}</h2>
-  </div>
+    <div class="header-left">
+      <a routerLink="/sdc/home" class="back-link">← Back to Inbox</a>
+      <h2>Workspace #{{ ticket?.id }}</h2>
+    </div>
 
-  <div class="header-right">
-    @if (ticket) {
-      <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-view-logs">
-        📜 View Audit Logs
-      </a>
-    }
+    <div class="header-right">
+      @if (ticket) {
+        <a [routerLink]="['/sdc/ticket', ticket.id]" class="btn-view-logs">
+          📜 View Audit Logs
+        </a>
+      }
+    </div>
   </div>
-</div>
 
   @if (ticket) {
     <div class="content-grid">
@@ -58,7 +58,13 @@
           
           @if (ticket.status === 'APPROVED') {
             <div class="state-box">
-              <p>Ticket is assigned to your team.</p>
+              @if (ticket.pm_remarks) {
+                <div class="pm-instruction-box">
+                  <label>PM Instruction:</label>
+                  <p>“{{ ticket.pm_remarks }}”</p>
+                </div>
+              }
+
               <button class="btn-start" (click)="startWork()">▶ Start Work</button>
               <button class="btn-revert" (click)="revertTicket()">↩ Wrong Domain? Revert</button>
             </div>
@@ -66,12 +72,31 @@
 
           @if (ticket.status === 'IN_PROGRESS') {
             <div class="state-box active">
-              <p>Work in progress...</p>
+              @if (ticket.pm_remarks) {
+                <div class="pm-instruction-box">
+                  <label>PM Instruction:</label>
+                  <p>“{{ ticket.pm_remarks }}”</p>
+                </div>
+              }
               
+              <div class="mini-logs-wrapper">
+                <label>Recent Logs:</label>
+                <div class="mini-logs-list">
+                  @for (log of workLogs; track log.id) {
+                    <div class="mini-log-item">
+                      <span class="log-time">{{ log.timestamp | date:'shortTime' }}</span>
+                      <span class="log-text">{{ log.remarks }}</span>
+                    </div>
+                  } @empty {
+                    <div class="no-logs">No updates yet.</div>
+                  }
+                </div>
+              </div>
+
               <button class="btn-log" (click)="openProgressModal()">
                 📝 Log Progress Note
               </button>
-
+              <br>
               <button class="btn-complete" (click)="completeWork()">
                 ✅ Mark Completed
               </button>
@@ -96,7 +121,7 @@
   <div class="modal-backdrop">
     <div class="modal-content">
       <h3>Update Progress</h3>
-      <p>Add a note to the Audit Log about what you are doing (e.g., "Waiting for spare parts").</p>
+      <p>Add a note to the Audit Log about what you are doing.</p>
       
       <textarea 
         [(ngModel)]="progressNote" 

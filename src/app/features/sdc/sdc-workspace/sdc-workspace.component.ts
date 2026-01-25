@@ -2,9 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- 1.
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
-// Services
-import { TicketService, Ticket } from '../../../core/services/ticket.service';
+import { TicketService, Ticket, AuditLog } from '../../../core/services/ticket.service';
 import { ModalService } from '../../../core/services/modal.service';
 
 // Directive
@@ -20,8 +18,8 @@ import { SlaStatusDirective } from '../../../shared/directives/sla-status.direct
 export class SdcWorkspaceComponent implements OnInit {
   ticket: Ticket | null = null;
   isLoading = true;
+  workLogs: AuditLog[] = [];
   
-  // Progress Modal State
   showProgressModal = false;
   progressNote = '';
 
@@ -37,6 +35,7 @@ export class SdcWorkspaceComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.loadTicket(id);
+      this.loadWorkHistory(id);
     }
   }
 
@@ -87,6 +86,7 @@ export class SdcWorkspaceComponent implements OnInit {
       next: () => {
         this.showProgressModal = false;
         this.modalService.open({ title: 'Logged', message: 'Work progress saved to audit log.', type: 'success' });
+        this.loadWorkHistory(this.ticket!.id);
         this.cd.detectChanges(); // <--- Ensure modal closes immediately
       },
       error: () => {
@@ -106,6 +106,16 @@ export class SdcWorkspaceComponent implements OnInit {
       this.ticketService.completeTicket(this.ticket!.id).subscribe(() => {
         this.router.navigate(['/sdc/history']);
       });
+    });
+  }
+
+  loadWorkHistory(id: number) {
+    this.ticketService.getAuditLogs(id).subscribe({
+      next: (logs) => {
+        // Filter: Only show "Work Update" actions
+        this.workLogs = logs.filter(log => log.action === 'Work Update');
+        this.cd.detectChanges();
+      }
     });
   }
 

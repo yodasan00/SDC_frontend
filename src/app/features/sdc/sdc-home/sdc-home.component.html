@@ -39,7 +39,9 @@
         <div class="icon-wrapper">✅</div>
         <div class="stat-info">
           <span class="stat-label">Completed</span>
-          <span class="stat-value">{{ stats.completed || 0 }}</span>
+          <span class="stat-value">
+            {{ (stats.completed || 0) + (stats.closed || 0) }}
+          </span>
         </div>
       </div>
 

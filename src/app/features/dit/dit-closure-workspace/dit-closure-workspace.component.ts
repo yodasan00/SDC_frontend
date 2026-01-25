@@ -1,8 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // <--- Import ChangeDetectorRef
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TicketService, Ticket } from '../../../core/services/ticket.service';
+import { TicketService, Ticket, AuditLog } from '../../../core/services/ticket.service'; // Added AuditLog interface
 import { ModalService } from '../../../core/services/modal.service';
 import { SlaStatusDirective } from '../../../shared/directives/sla-status.directive';
 
@@ -17,6 +17,7 @@ export class DitClosureWorkspaceComponent implements OnInit {
   ticket: Ticket | null = null;
   isLoading = true;
   remarks = '';
+  workLogs: AuditLog[] = []; // Typed array for logs
 
   constructor(
     private route: ActivatedRoute,
@@ -28,7 +29,10 @@ export class DitClosureWorkspaceComponent implements OnInit {
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) this.loadTicket(id);
+    if (id) {
+      this.loadTicket(id);
+      this.loadWorkHistory(id); // <--- 1. CALL THIS ON LOAD
+    }
   }
 
   loadTicket(id: number) {
@@ -37,6 +41,8 @@ export class DitClosureWorkspaceComponent implements OnInit {
       next: (t) => {
         this.ticket = t;
         this.isLoading = false;
+        
+        // Validation: Only allow closure if COMPLETED
         if (t.status !== 'COMPLETED' && t.status !== 'CLOSED') {
            this.modalService.open({ title: 'Invalid Status', message: 'Ticket not ready for closure.', type: 'error' });
            this.router.navigate(['/dit/history']);
@@ -48,6 +54,18 @@ export class DitClosureWorkspaceComponent implements OnInit {
         this.isLoading = false;
         this.cd.detectChanges();
       }
+    });
+  }
+
+  // 2. FETCH WORK LOGS FUNCTION
+  loadWorkHistory(id: number) {
+    this.ticketService.getAuditLogs(id).subscribe({
+      next: (logs) => {
+        // Filter to only show specific "Work Update" actions
+        this.workLogs = logs.filter(log => log.action === 'Work Update');
+        this.cd.detectChanges();
+      },
+      error: (err) => console.error('Failed to load logs', err)
     });
   }
 

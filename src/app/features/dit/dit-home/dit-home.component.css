@@ -101,6 +101,7 @@
 .stat-card.blue .icon-wrapper   { background: #eff6ff; color: #3b82f6; } /* Blue for Total */
 .stat-card.grey .icon-wrapper   { background: #f1f5f9; color: #64748b; } /* Grey for Closed */
 .stat-card.teal .icon-wrapper   { background: #ccfbf1; color: #0f766e; } /* Teal */
+.stat-card.purple .icon-wrapper { background: #f5f3ff; color: #8b5cf6; } /* In Progress */
 
 /* Text Info */
 .stat-info {

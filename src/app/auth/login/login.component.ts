@@ -14,7 +14,7 @@ import { AuthService } from '../auth.service';
 export class LoginComponent {
 
   credentials = {
-    identifier: '',
+    username: '',
     password: ''
   };
 
@@ -27,11 +27,10 @@ export class LoginComponent {
   ) {}
 
   onSubmit() {
-    const identifier = this.credentials.identifier?.trim();
+    const username = this.credentials.username?.trim();
     const password = this.credentials.password;
 
-    // ✅ HARD GUARD (prevents blank submission)
-    if (!identifier || !password) {
+    if (!username || !password) {
       this.errorMessage = 'Please enter username / email / phone and password';
       return;
     }
@@ -40,7 +39,7 @@ export class LoginComponent {
     this.errorMessage = '';
 
     this.authService.login({
-      identifier: identifier,
+      username: username,
       password: password
     }).subscribe({
       next: (res) => {

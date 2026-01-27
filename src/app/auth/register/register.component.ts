@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RegisterService, RegisterRequest } from './register.service';
@@ -10,9 +10,9 @@ import { RegisterService, RegisterRequest } from './register.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
 
-  registerForm: FormGroup;
+  registerForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
   showSuccessModal = false;
@@ -30,8 +30,19 @@ export class RegisterComponent {
   departments: { value: number; display: string }[] = [];
   domainChoices: { value: number; display: string }[] = [];
 
-  constructor(private fb: FormBuilder, private registerService: RegisterService) {
+  constructor(
+    private fb: FormBuilder,
+    private registerService: RegisterService
+  ) {}
 
+  ngOnInit(): void {
+    this.initForm();
+    this.handleRoleChange();
+  }
+
+  // ---------------- FORM ----------------
+
+  initForm() {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -39,20 +50,77 @@ export class RegisterComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required],
       role: ['', Validators.required],
-      department: [null],
-      domain_name: [null]
+      department: [''],
+      domain_name: ['']
     }, { validators: this.passwordMatchValidator });
+  }
 
+  // ---------------- ROLE CHANGE ----------------
+
+  handleRoleChange() {
     this.registerForm.get('role')?.valueChanges.subscribe(role => {
-      this.showDepartment = role === 'DEPARTMENT';
-      this.showDomain = role === 'SDC';
+
+      this.showDepartment = false;
+      this.showDomain = false;
+
+      this.registerForm.patchValue({
+        department: '',
+        domain_name: ''
+      });
+
+      if (role === 'DEPARTMENT') {
+        this.showDepartment = true;
+        this.loadDepartments();
+      }
+
+      if (role === 'SDC') {
+        this.showDomain = true;
+        this.loadDomains();
+      }
     });
   }
 
+  // ---------------- API CALLS ----------------
+
+  loadDepartments() {
+    this.registerService.getDepartments().subscribe({
+      next: (res: any[]) => {
+        this.departments = res.map(d => ({
+          value: d.id,
+          display: d.name
+        }));
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Failed to load departments';
+      }
+    });
+  }
+
+  loadDomains() {
+    this.registerService.getDomains().subscribe({
+      next: (res: any[]) => {
+        this.domainChoices = res.map(d => ({
+          value: d.value,   // backend sends value as string
+          display: d.display
+        }));
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Failed to load domains';
+      }
+    });
+  }
+
+  // ---------------- VALIDATOR ----------------
+
   passwordMatchValidator(form: FormGroup) {
     return form.get('password')?.value === form.get('confirmPassword')?.value
-      ? null : { passwordMismatch: true };
+      ? null
+      : { passwordMismatch: true };
   }
+
+  // ---------------- SUBMIT ----------------
 
   onSubmit() {
     if (this.registerForm.invalid) return;
@@ -61,9 +129,13 @@ export class RegisterComponent {
     this.errorMessage = '';
 
     const data: RegisterRequest = {
-      ...this.registerForm.value,
-      department_name: this.registerForm.value.department,
-      domain: this.registerForm.value.domain_name
+      username: this.registerForm.value.username,
+      email: this.registerForm.value.email,
+      phone_number: this.registerForm.value.phone_number,
+      password: this.registerForm.value.password,
+      role: this.registerForm.value.role,
+      department_name: this.registerForm.value.department || null,
+      domain: this.registerForm.value.domain_name || null
     };
 
     this.registerService.register(data).subscribe({
@@ -72,7 +144,8 @@ export class RegisterComponent {
         this.showSuccessModal = true;
         this.registerForm.reset();
       },
-      error: () => {
+      error: err => {
+        console.error(err);
         this.isLoading = false;
         this.errorMessage = 'Registration failed';
       }

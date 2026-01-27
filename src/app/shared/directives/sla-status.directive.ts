@@ -35,7 +35,7 @@ export class SlaStatusDirective implements OnInit {
       
       // "Overdue" Badge
       const badge = this.renderer.createElement('div');
-      this.renderer.setProperty(badge, 'innerText', '🔥 SLA BREACHED');
+      this.renderer.setProperty(badge, 'innerText', 'SLA BREACHED');
       
       // Badge Styling
       this.renderer.setStyle(badge, 'position', 'absolute');

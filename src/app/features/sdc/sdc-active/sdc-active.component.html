@@ -17,11 +17,16 @@
         <thead>
           <tr>
             <th style="width: 80px;">ID</th>
-            <th style="width: 50%;">Task Details</th>
+            <th style="width: 45%;">Task Details</th>
+
+          
+            <th>Time</th>
+
             <th>Status</th>
             <th style="text-align: right;">Action</th>
           </tr>
         </thead>
+
         <tbody>
           @for (ticket of activeTickets; track ticket.id) {
             <tr>
@@ -34,12 +39,31 @@
                   <div class="ticket-title">{{ ticket.title }}</div>
                 </a>
                 
-                <div class="ticket-desc">{{ ticket.description | slice:0:80 }}...</div>
+                <div class="ticket-desc">
+                  {{ ticket.description | slice:0:80 }}...
+                </div>
+
                 <div class="ticket-meta">
-                  <span class="date-badge">📅 Started: {{ ticket.created_at | date:'shortDate' }}</span>
+                  <span class="date-badge">
+                    📅 Started: {{ ticket.created_at | date:'shortDate' }}
+                  </span>
                 </div>
               </td>
-              
+
+             
+              <td>
+                <span
+                  class="priority-badge"
+                  [class.p1]="ticket.priority === 'P1'"
+                  [class.p2]="ticket.priority === 'P2'"
+                  [class.p3]="ticket.priority === 'P3'"
+                  [class.p4]="ticket.priority === 'P4'"
+                  [class.overdue]="isOverdue(ticket)"
+                >
+                  {{ isOverdue(ticket) ? '⚠ OVERDUE' : ticket.priority }}
+                </span>
+              </td>
+
               <td>
                 <span class="status-badge status-progress">
                   <span class="pulse-dot"></span> In Progress
@@ -48,17 +72,18 @@
               
               <td class="action-cell">
                 <div class="action-buttons">
-                  
-                  <a [routerLink]="['/sdc/work', ticket.id]" class="btn-workspace">
-                    -> Open Workspace
+                  <a
+                    [routerLink]="['/sdc/work', ticket.id]"
+                    class="btn-workspace"
+                  >
+                    → Open Workspace
                   </a>
-
                 </div>
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="4" class="empty-state">
+              <td colspan="5" class="empty-state">
                 🚀 No active tasks right now. Go to "New Requests" to start a job!
               </td>
             </tr>

@@ -229,3 +229,14 @@ textarea {
   text-align: center;
   padding: 8px;
 }
+
+/* SLA status text */
+.sla-ok {
+  color: #2ecc71;
+  font-weight: 700;
+}
+
+.sla-overdue {
+  color: #e74c3c;
+  font-weight: 700;
+}

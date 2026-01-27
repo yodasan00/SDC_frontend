@@ -224,3 +224,63 @@
 .btn-workspace:hover {
   background-color: #2980b9;
 }
+
+/* ===============================
+   PRIORITY BADGE (ADDED)
+   =============================== */
+
+.priority-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  min-width: 90px;
+  text-align: center;
+}
+
+/* Priority colors */
+.priority-badge.p1 {
+  background-color: #e0dd0b;
+  color: #fff;
+}
+
+.priority-badge.p2 {
+  background-color: #fa8c16;
+  color: #fff;
+}
+
+.priority-badge.p3 {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.priority-badge.p4 {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+/* ===============================
+   OVERDUE STATE
+   =============================== */
+
+.priority-badge.overdue {
+  background-color: #fa8c16;
+  color: #856404;
+  border: 1px solid #43431f;
+  animation: overdueBlink 1.2s infinite;
+}
+
+/* Blink animation */
+@keyframes overdueBlink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
+}

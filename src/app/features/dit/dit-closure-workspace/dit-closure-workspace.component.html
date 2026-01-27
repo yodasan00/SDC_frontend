@@ -6,13 +6,18 @@
       <h2>Closure Workspace #{{ ticket?.id }}</h2>
     </div>
     <div class="header-right">
-      <a *ngIf="ticket" [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">📜 Audit Logs</a>
+      <a *ngIf="ticket" [routerLink]="['/dit/ticket', ticket.id]" class="btn-logs">
+        📜 Audit Logs
+      </a>
     </div>
   </div>
 
   @if (ticket) {
     <div class="content-grid">
       
+      <!-- ========================= -->
+      <!-- Ticket Overview -->
+      <!-- ========================= -->
       <div class="details-card">
         <div class="card-header">
           <h3>Ticket Overview</h3>
@@ -25,13 +30,26 @@
               <label>Subject</label>
               <span>{{ ticket.title }}</span>
             </div>
+
             <div class="info-item">
               <label>Assigned To</label>
               <span>{{ ticket.domain_value || 'Technical Team' }}</span>
             </div>
+
             <div class="info-item">
               <label>Priority</label>
               <span>{{ ticket.priority }}</span>
+            </div>
+
+            <!-- ✅ NEW: SLA STATUS -->
+            <div class="info-item">
+              <label>Work Status</label>
+              <span
+                [class.sla-ok]="!isOverdue(ticket)"
+                [class.sla-overdue]="isOverdue(ticket)"
+              >
+                {{ isOverdue(ticket) ? 'OVERDUE' : 'ONTIME' }}
+              </span>
             </div>
           </div>
 
@@ -42,11 +60,17 @@
           
           <div class="desc-box result-box">
             <label>Resolution Status:</label>
-            <p>SDC Team has marked this work as <strong>Complete</strong>. Please verify the output before closing.</p>
+            <p>
+              SDC Team has marked this work as <strong>Complete</strong>.
+              Please verify the output before closing.
+            </p>
           </div>
         </div>
       </div>
 
+      <!-- ========================= -->
+      <!-- Verification Console -->
+      <!-- ========================= -->
       <div class="action-card">
         <div class="card-header">
           <h3>✅ Verification Console</h3>
@@ -58,7 +82,15 @@
             <div class="check-icon">⏱️</div>
             <div class="check-text">
               <strong>SLA Compliance Check</strong>
-              <small>Review timestamps in Audit Log</small>
+              <small>
+                Status:
+                <span
+                  [class.sla-ok]="!isOverdue(ticket)"
+                  [class.sla-overdue]="isOverdue(ticket)"
+                >
+                  {{ isOverdue(ticket) ? 'OVERDUE' : 'ONTIME' }}
+                </span>
+              </small>
             </div>
           </div>
 
@@ -70,18 +102,26 @@
             <div class="mini-logs-wrapper">
               @for (log of workLogs; track log.id) {
                 <div class="mini-log-item">
-                  <span class="log-time">{{ log.timestamp | date:'shortTime' }}</span>
+                  <span class="log-time">
+                    {{ log.timestamp | date:'shortTime' }}
+                  </span>
                   <span class="log-text">{{ log.remarks }}</span>
                 </div>
               } @empty {
-                <div class="no-logs">No specific work notes logged by the technical team.</div>
+                <div class="no-logs">
+                  No specific work notes logged by the technical team.
+                </div>
               }
             </div>
           </div>
 
           <div class="form-group">
             <label>Closure Remarks (Optional)</label>
-            <textarea [(ngModel)]="remarks" rows="3" placeholder="e.g. User confirmed issue resolved..."></textarea>
+            <textarea
+              [(ngModel)]="remarks"
+              rows="3"
+              placeholder="e.g. User confirmed issue resolved..."
+            ></textarea>
           </div>
 
           <div class="action-buttons">

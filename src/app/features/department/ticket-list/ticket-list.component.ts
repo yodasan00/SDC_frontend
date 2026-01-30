@@ -56,6 +56,7 @@ export class TicketListComponent implements OnInit {
       case 'REJECTED': return 'status-rejected';
       case 'IN_PROGRESS': return 'status-progress';
       case 'COMPLETED': return 'status-completed';
+      case 'CLOSED': return 'status-closed';
       default: return '';
     }
   }

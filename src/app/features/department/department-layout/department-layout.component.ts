@@ -13,7 +13,6 @@ import { AuthService } from '../../../auth/auth.service';
   styleUrls: ['./department-layout.component.css']
 })
 export class DepartmentLayoutComponent {
-  // Set to 'false' if you want it hidden by default
   isSidebarOpen = false; 
   constructor(private authService: AuthService) {}
 
